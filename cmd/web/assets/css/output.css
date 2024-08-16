@@ -809,6 +809,10 @@ video {
   height: 1rem;
 }
 
+.h-40 {
+  height: 10rem;
+}
+
 .h-5 {
   height: 1.25rem;
 }
@@ -823,6 +827,10 @@ video {
 
 .h-full {
   height: 100%;
+}
+
+.max-h-full {
+  max-height: 100%;
 }
 
 .min-h-full {
@@ -887,6 +895,10 @@ video {
 
 .max-w-7xl {
   max-width: 80rem;
+}
+
+.max-w-full {
+  max-width: 100%;
 }
 
 .max-w-screen-md {
@@ -1205,6 +1217,11 @@ video {
 
 .stroke-gray-200 {
   stroke: #e5e7eb;
+}
+
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 .object-cover {
