@@ -25,6 +25,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/login", templ.Handler(web.LoginPage()).ServeHTTP)
 	r.Get("/signup", templ.Handler(web.SignupPage()).ServeHTTP)
 	r.Get("/patient_signup", templ.Handler(web.PatientSignupPage()).ServeHTTP)
+	r.Get("/signup_steps", templ.Handler(web.SignupStepsPage()).ServeHTTP)
 	r.Get("/patient_submit", templ.Handler(web.PatientSubmitPage()).ServeHTTP)
 
 	return r
