@@ -10,6 +10,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"ORDI/internal/database"
+	"ORDI/internal/database/mysql"
 )
 
 type Server struct {
@@ -23,7 +24,7 @@ func NewServer() *http.Server {
 	NewServer := &Server{
 		port: port,
 
-		db: database.NewMySqlConnection(),
+		db: mysql.NewMySqlConnection(),
 	}
 
 	// Declare Server config
