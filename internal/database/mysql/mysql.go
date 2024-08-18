@@ -27,7 +27,7 @@ var (
 	mysqlInstance *mysqlService
 )
 
-func NewMySqlConnection() database.Service {
+func NewMySqlConnection() database.Database {
 	// Reuse Connection
 	if mysqlInstance != nil {
 		return mysqlInstance
@@ -107,4 +107,13 @@ func (s *mysqlService) Health() map[string]string {
 func (s *mysqlService) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
+}
+
+// ExecuteQuery executes a query on the database.
+func (s *mysqlService) Insert(ctx context.Context, query string, args ...any) error {
+	_, err := s.db.ExecContext(ctx, query, args)
+	if err != nil {
+		return err
+	}
+	return nil
 }

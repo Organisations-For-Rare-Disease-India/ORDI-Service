@@ -1,12 +1,10 @@
 package server
 
 import (
+	"ORDI/cmd/web"
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"ORDI/cmd/web"
-	"ORDI/cmd/web/handlers"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
@@ -27,7 +25,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/signup", templ.Handler(web.SignupPage()).ServeHTTP)
 	r.Get("/patient_signup", templ.Handler(web.PatientSignupPage()).ServeHTTP)
 	r.Get("/signup_steps", templ.Handler(web.SignupStepsPage()).ServeHTTP)
-	r.Post("/patient_submit", handlers.PatientSignupFormHandler)
+	r.Post("/patient_submit", s.PatientSignupFormHandler)
 	return r
 }
 

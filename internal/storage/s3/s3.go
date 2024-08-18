@@ -25,7 +25,7 @@ var (
 	s3bucket = os.Getenv("S3BUCKET")
 )
 
-func NewS3ServiceConnection() database.Service {
+func NewS3ServiceConnection() database.Database {
 	// Reuse Connection
 	if s3instance != nil {
 		return s3instance
@@ -75,5 +75,9 @@ func (s *s3Service) Health() map[string]string {
 
 func (s *s3Service) Close() error {
 	// nothing to close
+	return nil
+}
+
+func (s *s3Service) Insert(ctx context.Context, query string, args ...interface{}) error {
 	return nil
 }
