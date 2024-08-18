@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"ORDI/cmd/web"
+	"ORDI/cmd/web/handlers"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
@@ -26,8 +27,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/signup", templ.Handler(web.SignupPage()).ServeHTTP)
 	r.Get("/patient_signup", templ.Handler(web.PatientSignupPage()).ServeHTTP)
 	r.Get("/signup_steps", templ.Handler(web.SignupStepsPage()).ServeHTTP)
-	r.Get("/patient_submit", templ.Handler(web.PatientSubmitPage()).ServeHTTP)
-
+	r.Post("/patient_submit", handlers.PatientSignupFormHandler)
 	return r
 }
 
