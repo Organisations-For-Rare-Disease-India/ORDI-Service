@@ -3,7 +3,10 @@ package server
 import (
 	"ORDI/cmd/web"
 	"ORDI/internal/models"
+	"ORDI/internal/utils"
+	"bytes"
 	"context"
+	"fmt"
 
 	"net/http"
 
@@ -14,7 +17,7 @@ import (
 var decoder = schema.NewDecoder()
 
 func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	// ctx := r.Context()
 	var patient models.PatientInfo
 
 	// Render the submit page with a success message
@@ -36,7 +39,26 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	// Push the data to the database
-	err = s.AddPatientToDataBase(ctx, patient)
+	// err = s.AddPatientToDataBase(ctx, patient)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// Prepare attachement
+	pdfBuffer, err := patientToPDF(patient)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Email details
+	subject := "New Patient registration"
+	body := "A new patient has signed up. Please find the attached PDF with the details"
+	to := "jhavedantamay@gmail.com"
+	attachementName := fmt.Sprintf("%s.pdf", patient.FirstName)
+
+	err = s.email.SendEmail(to, subject, body, pdfBuffer, attachementName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -62,4 +84,35 @@ func (s *Server) AddPatientToDataBase(ctx context.Context, patient models.Patien
 	)
 
 	return err
+}
+
+// Convert Patient to a PDF
+func patientToPDF(patient models.PatientInfo) (*bytes.Buffer, error) {
+
+	builder := utils.NewPDFBuilder()
+	builder.AddTitle("Patient Information").
+		AddField("Name", fmt.Sprintf("%s %s", patient.FirstName, patient.LastName)).
+		AddField("Gender", patient.Gender).
+		AddField("Father's Name", patient.FatherName).
+		AddField("Father's Occupation", patient.FatherOccupation).
+		AddField("ABHA ID", fmt.Sprintf("%d", patient.ABHAID)).
+		AddField("Email", patient.Email).
+		AddField("Address", fmt.Sprintf("%s, %s, %s, %s, %s",
+			patient.StreetAddress, patient.City, patient.Region, patient.Country, patient.PostalCode)).
+		AddSectionTitle("Doctor Information").
+		AddField("Doctor Name", patient.DoctorName).
+		AddField("Hospital Name", patient.HospitalName).
+		AddField("Doctor Address", patient.DoctorAddress).
+		AddField("Doctor Email", patient.DoctorEmail).
+		AddField("Doctor Contact", patient.DoctorContact).
+		AddField("Doctor Remarks", patient.DoctorRemarks).
+		AddSectionTitle("Disease Information").
+		AddField("Disease Name", patient.DiseaseName).
+		AddField("Symptoms", patient.DiseaseSymptoms).
+		AddSectionTitle("Sibling Information").
+		AddField("Has Brother", fmt.Sprintf("%t", patient.HasBrother)).
+		AddField("Has Sister", fmt.Sprintf("%t", patient.HasSister)).
+		AddField("Sibling Has Rare Disease", fmt.Sprintf("%t", patient.SiblingHasRareDisease))
+
+	return builder.Output()
 }

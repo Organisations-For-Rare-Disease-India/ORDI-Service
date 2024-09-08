@@ -11,22 +11,26 @@ import (
 
 	"ORDI/internal/database"
 	"ORDI/internal/database/mysql"
+	"ORDI/internal/email"
+	"ORDI/internal/email/emailSender"
 	"ORDI/internal/storage"
 	"ORDI/internal/storage/s3"
 )
 
 type Server struct {
-	port int
-	db   database.Database
-	s3   storage.Storage
+	port  int
+	db    database.Database
+	s3    storage.Storage
+	email email.Email
 }
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
-		port: port,
-		db:   mysql.NewMySqlConnection(),
-		s3:   s3.NewS3ServiceConnection(),
+		port:  port,
+		db:    mysql.NewMySqlConnection(),
+		s3:    s3.NewS3ServiceConnection(),
+		email: emailSender.NewDefaultEmailSender(),
 	}
 
 	// Declare Server config
