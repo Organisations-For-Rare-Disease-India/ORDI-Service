@@ -63,6 +63,16 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	err = s.email.SendEmail("info@ordindia.in", subject, body, pdfBuffer, attachementName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = s.email.SendEmail("prasannashirol@gmail.com", subject, body, pdfBuffer, attachementName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (s *Server) AddPatientToDataBase(ctx context.Context, patient models.PatientInfo) error {
