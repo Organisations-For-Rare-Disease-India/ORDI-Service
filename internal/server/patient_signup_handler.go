@@ -57,17 +57,17 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 	body := "A new patient has signed up. Please find the attached PDF with the details"
 	to := "jhavedantamay@gmail.com"
 	attachementName := fmt.Sprintf("%s.pdf", patient.FirstName)
+	err = s.email.SendEmail("prasannashirol@gmail.com", subject, body, pdfBuffer, attachementName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	err = s.email.SendEmail(to, subject, body, pdfBuffer, attachementName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = s.email.SendEmail("info@ordindia.in", subject, body, pdfBuffer, attachementName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = s.email.SendEmail("prasannashirol@gmail.com", subject, body, pdfBuffer, attachementName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
