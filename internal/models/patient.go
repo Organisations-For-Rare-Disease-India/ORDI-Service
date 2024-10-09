@@ -14,6 +14,7 @@ type PersonalInfo struct {
 	FatherOccupation string `schema:"father_occupation"`
 	ABHAID           int    `schema:"abha_id"`
 	Email            string `schema:"email_id"`
+	Password         string `schema:"password`
 	Country          string `schema:"country"`
 	StreetAddress    string `schema:"street_address"`
 	City             string `schema:"city"`

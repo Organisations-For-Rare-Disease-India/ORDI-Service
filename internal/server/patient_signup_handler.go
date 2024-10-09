@@ -6,7 +6,10 @@ import (
 	"ORDI/internal/utils"
 	"bytes"
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
+	"time"
 
 	"net/http"
 
@@ -22,7 +25,7 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 
 	// Render the submit page with a success message
 	// Render the template with the success flag
-	templ.Handler(web.PatientSubmitPage()).ServeHTTP(w, r)
+	go templ.Handler(web.PatientSubmitPage()).ServeHTTP(w, r)
 
 	// Parse the form data
 	err := r.ParseForm()
@@ -45,6 +48,12 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 	// 	return
 	// }
 
+	// Send verification email
+	err = s.SendVerificationEmail(context.Background(), patient.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 	// Prepare attachement
 	pdfBuffer, err := patientToPDF(patient)
 	if err != nil {
@@ -54,27 +63,19 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 
 	// Email details
 	subject := "New Patient registration"
+	bodyType := "text/plain"
 	body := "A new patient has signed up. Please find the attached PDF with the details"
 	to := "jhavedantamay@gmail.com"
 	attachementName := fmt.Sprintf("%s.pdf", patient.FirstName)
-	err = s.email.SendEmail("prasannashirol@gmail.com", subject, body, pdfBuffer, attachementName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = s.email.SendEmail(to, subject, body, pdfBuffer, attachementName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = s.email.SendEmail("info@ordindia.in", subject, body, pdfBuffer, attachementName)
+	err = s.email.SendEmail(to, subject, body, pdfBuffer, attachementName, bodyType)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func (s *Server) AddPatientToDataBase(ctx context.Context, patient models.PatientInfo) error {
+// TODO: Mark the patient as unverified
+func (s *Server) AddUnverifiedPatientToDatabase(ctx context.Context, patient models.PatientInfo) error {
 	// Add the patient to the database
 
 	// SQL query to insert the patient into the database
@@ -124,4 +125,44 @@ func patientToPDF(patient models.PatientInfo) (*bytes.Buffer, error) {
 		AddField("Sibling Has Rare Disease", fmt.Sprintf("%t", patient.SiblingHasRareDisease))
 
 	return builder.Output()
+}
+
+// Send verification email
+func (s *Server) SendVerificationEmail(ctx context.Context, emailId string) error {
+
+	token, err := generateVerificationtoken()
+	if err != nil {
+		return err
+	}
+
+	verificationURL := fmt.Sprintf("%s:%d/verify?token=%s", s.url, s.port, token)
+	htmlBody := fmt.Sprintf(`
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>Verify your email</title>
+		</head>
+		<body>
+			<h2>Thank you for registering!</h2>
+			<p>Please click the link below to verify your email address:</p>
+			<p><a href="%s" style="color: #3498db; text-decoration: none;">Verify Email</a></p>
+			<p>This link is valid for 15 minutes.</p>
+			<p>If you did not register, you can ignore this email.</p>
+		</body>
+		</html>
+`, verificationURL)
+
+	// Store the token in cache for verification
+	s.cache.Set(ctx, token, emailId, 15*time.Minute)
+	return s.email.SendEmail(emailId, "ORDI Email Verification", htmlBody, nil, "", "text/html")
+}
+
+// Generate verification token
+func generateVerificationtoken() (string, error) {
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	// Encode the byte slice to a URL-safe base64 string
+	return base64.RawURLEncoding.EncodeToString(b), nil
 }
