@@ -135,7 +135,8 @@ func (s *Server) SendVerificationEmail(ctx context.Context, emailId string) erro
 		return err
 	}
 
-	verificationURL := fmt.Sprintf("%s:%d/verify?token=%s", s.url, s.port, token)
+	// verificationURL := fmt.Sprintf("%s:%d/verify?token=%s", s.url, s.port, token)
+	verificationURL := fmt.Sprint("ordindia.foundation/verify?token=%s", token)
 	htmlBody := fmt.Sprintf(`
 		<!DOCTYPE html>
 		<html>
