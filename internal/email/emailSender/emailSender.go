@@ -41,14 +41,14 @@ func NewEmailSender(config *EmailConfig) *EmailSender {
 	}
 }
 
-func (e *EmailSender) SendEmail(to string, subject string, body string, attachement *bytes.Buffer, attachmentName string) error {
+func (e *EmailSender) SendEmail(to string, subject string, body string, attachement *bytes.Buffer, attachmentName string, bodyType string) error {
 	m := gomail.NewMessage()
 
 	// Set the email headers
 	m.SetHeader("From", e.Config.FromAddress)
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
-	m.SetBody("text/plain", body)
+	m.SetBody(bodyType, body)
 
 	// Attach the required attachment
 	if attachement != nil {
