@@ -1,3 +1,4 @@
 cmd/web/**/*.go
 main
 tmp/
+*.rdb

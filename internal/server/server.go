@@ -34,7 +34,7 @@ func NewServer() *http.Server {
 	NewServer := &Server{
 		url:   baseURL,
 		port:  port,
-		db:    mysql.NewMySqlConnection(),
+		db:    mysql.NewDefaultSqlConnection(),
 		s3:    s3.NewS3ServiceConnection(),
 		email: emailSender.NewDefaultEmailSender(),
 		cache: redisClient.NewDefaultRedisClient(),

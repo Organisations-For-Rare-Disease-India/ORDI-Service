@@ -4,6 +4,16 @@ import "context"
 
 // Database represents a service that interacts with a database.
 type Database interface {
+	// Save would insert or update the entity on the database
+	Save(ctx context.Context, entity interface{}) error
+
+	// FindByID retrieves a record of type entity with primary key id
+	FindByID(ctx context.Context, id uint, entity interface{}) error
+
+	// Delete removes the specified entity from the database
+	// The primary id is extracted from the entity
+	Delete(ctx context.Context, entity interface{}) error
+
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
@@ -11,6 +21,4 @@ type Database interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
-
-	Insert(ctx context.Context, query string, args ...any) error
 }
