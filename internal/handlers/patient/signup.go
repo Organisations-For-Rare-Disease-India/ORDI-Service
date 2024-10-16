@@ -1,4 +1,4 @@
-package server
+package patient
 
 import (
 	"ORDI/cmd/web"
@@ -15,12 +15,13 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/gorilla/schema"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var decoder = schema.NewDecoder()
 
-func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request) {
-	// ctx := r.Context()
+func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	var patient models.PatientInfo
 
 	// Render the submit page with a success message
@@ -48,13 +49,34 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 	// 	return
 	// }
 
-	// Send verification email
-	err = s.SendVerificationEmail(context.Background(), patient.Email)
+	// Generate token
+	token, err := generateVerificationtoken()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	// Prepare attachement
+	// Store token in cache
+	go s.cache.Set(ctx, token, patient.Email, 15*time.Minute)
+
+	// Generate html body for verification mail
+	htmlBody := generateVerificationHTML(ctx, token)
+	s.email.SendEmail(patient.Email, "ORDI Email Verification", htmlBody, nil, "", "text/html")
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(patient.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	patient.Password = string(hashedPassword)
+
+	// Store patient on database
+	patient.Verified = false // Mark verified as false
+	s.patientRepository.Save(ctx, &patient)
+
+	// Prepare attachement to send to ORDI
 	pdfBuffer, err := patientToPDF(patient)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -72,28 +94,6 @@ func (s *Server) PatientSignupFormHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-// TODO: Mark the patient as unverified
-func (s *Server) AddUnverifiedPatientToDatabase(ctx context.Context, patient models.PatientInfo) error {
-	// Add the patient to the database
-
-	// SQL query to insert the patient into the database
-	err := s.db.Insert(ctx, `
-		INSERT INTO patient_info (
-			first_name, last_name, gender, father_name, father_occupation,
-			abha_id, email, country, street_address, city, region, postal_code,
-			doctor_name, hospital_name, doctor_address, doctor_email, doctor_contact,
-			doctor_remarks, has_brother, has_sister, sibling_has_rare_disease
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`,
-		patient.FirstName, patient.LastName, patient.Gender, patient.FatherName, patient.FatherOccupation,
-		patient.ABHAID, patient.Email, patient.Country, patient.StreetAddress, patient.City, patient.Region, patient.PostalCode,
-		patient.DoctorName, patient.HospitalName, patient.DoctorAddress, patient.DoctorEmail, patient.DoctorContact,
-		patient.DoctorRemarks, patient.HasBrother, patient.HasSister, patient.SiblingHasRareDisease,
-	)
-
-	return err
 }
 
 // Convert Patient to a PDF
@@ -127,13 +127,8 @@ func patientToPDF(patient models.PatientInfo) (*bytes.Buffer, error) {
 	return builder.Output()
 }
 
-// Send verification email
-func (s *Server) SendVerificationEmail(ctx context.Context, emailId string) error {
-
-	token, err := generateVerificationtoken()
-	if err != nil {
-		return err
-	}
+// Generate html to send on verification email
+func generateVerificationHTML(ctx context.Context, token string) string {
 
 	// verificationURL := fmt.Sprintf("%s:%d/verify?token=%s", s.url, s.port, token)
 	verificationURL := fmt.Sprintf("ordindia.foundation/verify?token=%s", token)
@@ -153,9 +148,7 @@ func (s *Server) SendVerificationEmail(ctx context.Context, emailId string) erro
 		</html>
 `, verificationURL)
 
-	// Store the token in cache for verification
-	s.cache.Set(ctx, token, emailId, 15*time.Minute)
-	return s.email.SendEmail(emailId, "ORDI Email Verification", htmlBody, nil, "", "text/html")
+	return htmlBody
 }
 
 // Generate verification token

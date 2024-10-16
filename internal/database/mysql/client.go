@@ -115,3 +115,10 @@ func (s *mysqlService) Save(ctx context.Context, entity interface{}) error {
 	}
 	return nil
 }
+
+func (s *mysqlService) FindByField(ctx context.Context, entity interface{}, field string, value interface{}) error {
+	if err := s.db.WithContext(ctx).Where(field+" = ?", value).First(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}

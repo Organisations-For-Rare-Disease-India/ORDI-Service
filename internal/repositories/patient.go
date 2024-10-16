@@ -4,6 +4,9 @@ import (
 	"ORDI/internal/database"
 	"ORDI/internal/models"
 	"context"
+	"errors"
+
+	"gorm.io/gorm"
 )
 
 type Patient interface {
@@ -12,6 +15,8 @@ type Patient interface {
 	FindByID(ctx context.Context, id uint) (*models.PatientInfo, error)
 
 	Delete(ctx context.Context, patient *models.PatientInfo) error
+
+	FindByField(ctx context.Context, field string, value interface{}) (*models.PatientInfo, error)
 }
 
 type patientRepository struct {
@@ -36,7 +41,17 @@ func (r *patientRepository) FindByID(ctx context.Context, id uint) (*models.Pati
 	return &patient, nil
 }
 
-// Delete removes a patient from the database.
 func (r *patientRepository) Delete(ctx context.Context, patient *models.PatientInfo) error {
 	return r.db.Delete(ctx, patient)
+}
+
+func (r *patientRepository) FindByField(ctx context.Context, field string, value interface{}) (*models.PatientInfo, error) {
+	var patient models.PatientInfo
+	if err := r.db.FindByField(ctx, &patient, field, value); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // No patient found
+		}
+		return nil, err
+	}
+	return &patient, nil
 }

@@ -21,4 +21,7 @@ type Database interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+
+	// FindByField retrieves the first record with field and provided value
+	FindByField(ctx context.Context, entity interface{}, field string, value interface{}) error
 }
