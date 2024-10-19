@@ -21,6 +21,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jung-kurt/gofpdf v1.16.2 // indirect
 	github.com/redis/go-redis/v9 v9.6.1 // indirect
+	github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26 // indirect
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
