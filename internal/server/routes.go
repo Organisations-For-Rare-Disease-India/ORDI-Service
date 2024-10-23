@@ -29,11 +29,11 @@ func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositorie
 }
 
 func (s *Server) RegisterVerificationRoutes(r *chi.Mux, patientRepository repositories.Patient) {
-	verificationHandler := verification.NewPatienVerificationtHandler(verification.VerificationConfig{
+	verificationHandler := verification.NewVerificationHandler(verification.VerificationConfig{
 		PatientRepo: patientRepository,
 		Cache:       s.cache,
 	})
-	r.Get("/verify", verificationHandler.Verify)
+	r.Get("/verify_patient", verificationHandler.VerifyPatient)
 }
 
 func (s *Server) RegisterRoutes() http.Handler {

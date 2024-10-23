@@ -9,8 +9,6 @@ import (
 )
 
 func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
-	// TODO: Verify email and password
-	// TODO: Grab name and details from database
 	ctx := r.Context()
 
 	var loginDetails struct {
@@ -30,6 +28,7 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Find patient from database
 	patient, err := s.patientRepository.FindByField(ctx, "email", loginDetails.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -40,6 +39,7 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
+
 	// Compare the provided password with the stored hashed password
 	err = bcrypt.CompareHashAndPassword([]byte(patient.Password), []byte(loginDetails.Password))
 	if err != nil {
@@ -47,5 +47,6 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Show dashboard if  password matches
 	templ.Handler(web.PatientDashboardPage()).ServeHTTP(w, r)
 }

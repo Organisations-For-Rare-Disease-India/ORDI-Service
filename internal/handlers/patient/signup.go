@@ -131,7 +131,7 @@ func patientToPDF(patient models.PatientInfo) (*bytes.Buffer, error) {
 func generateVerificationHTML(ctx context.Context, token string) string {
 
 	// verificationURL := fmt.Sprintf("%s:%d/verify?token=%s", s.url, s.port, token)
-	verificationURL := fmt.Sprintf("ordindia.foundation/verify?token=%s", token)
+	verificationURL := fmt.Sprintf("ordindia.foundation/verify_patient?token=%s", token)
 	htmlBody := fmt.Sprintf(`
 		<!DOCTYPE html>
 		<html>
