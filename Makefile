@@ -1,5 +1,9 @@
 # Simple Makefile for a Go project
 
+
+PROJECT_REL_DIR=.
+include ${PROJECT_REL_DIR}/common.config.mk
+
 # Build the application
 all: build
 
@@ -16,11 +20,12 @@ run:
 
 # Create DB container
 docker-run:
-	@if docker compose up 2>/dev/null; then \
+	@if docker compose up -d mysql 2>/dev/null; then \
 		: ; \
 	else \
 		echo "Falling back to Docker Compose V1"; \
-		docker-compose up; \
+		docker-compose up -d mysql; \
+		sleep 10; \
 	fi
 
 # Shutdown DB container
