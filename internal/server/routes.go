@@ -51,6 +51,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/login", templ.Handler(web.LoginPage()).ServeHTTP)
 	r.Get("/signup", templ.Handler(web.SignupPage()).ServeHTTP)
 	r.Get("/signup_steps", templ.Handler(web.SignupStepsPage()).ServeHTTP)
+	r.Get("/terms_and_conditions", templ.Handler(web.TermsAndConditionsPage()).ServeHTTP)
 
 	// Patient specific handlers
 	patientRepository := repositories.NewPatientRepository(s.db)
