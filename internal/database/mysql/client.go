@@ -38,6 +38,28 @@ func NewDefaultSqlConnection() database.Database {
 func NewMySqlConnection(config SQLConfig) database.Database {
 
 	// Constructing the data source name string
+	createDBDsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%d)/?charset=utf8mb4&parseTime=True&loc=Local",
+		config.Username,
+		config.Password,
+		config.Host,
+		config.Port,
+	)
+
+	// Open connection to MySQL server without selecting a database
+	database, err := gorm.Open(mysql.Open(createDBDsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	// Check if the database exists and create it if not
+	createDbSQL := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s;", config.Name)
+	if err := database.Exec(createDbSQL).Error; err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.Username,
