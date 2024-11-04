@@ -12,7 +12,7 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var loginDetails struct {
-		Email    string `schema:"email"`
+		Email    string `schema:"email_id"`
 		Password string `schema:"password"`
 	}
 
@@ -29,13 +29,13 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Find patient from database
-	patient, err := s.patientRepository.FindByField(ctx, "email", loginDetails.Email)
+	patient, err := s.patientRepository.FindByField(ctx, "email_id", loginDetails.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if patient != nil {
+	if patient == nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}

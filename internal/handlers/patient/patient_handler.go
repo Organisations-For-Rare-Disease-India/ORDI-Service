@@ -3,6 +3,7 @@ package patient
 import (
 	"ORDI/internal/cache"
 	"ORDI/internal/email"
+	"ORDI/internal/models"
 	"ORDI/internal/repositories"
 	"net/http"
 )
@@ -14,13 +15,13 @@ type PatientHandlerInterface interface {
 }
 
 type patientHandler struct {
-	patientRepository repositories.Patient
+	patientRepository repositories.Repository[models.PatientInfo]
 	cache             cache.Cache
 	email             email.Email
 }
 
 type PatientHandlerConfig struct {
-	PatientRepo repositories.Patient
+	PatientRepo repositories.Repository[models.PatientInfo]
 	Cache       cache.Cache
 	Email       email.Email
 }
