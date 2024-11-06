@@ -329,7 +329,14 @@ templ PatientSignupScreen() {
               </div>
             </div>
         </div>
-
+        <div class="col-span-full">
+            <div class="flex items-center">
+                <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
+                <label for="terms" class="ml-2 block text-sm leading-6 text-gray-900">
+                    I have read and agree to the <a href="/terms_and_conditions" class="text-indigo-600 hover:text-indigo-500" target="_blank">Terms and Conditions</a> <span class="text-red-600">*</span>
+                </label>
+            </div>
+        </div>
         <div class="mt-8 space-y-10 divide-y divide-gray-900/10">
           <a href="/patient_submit">
             <button type="submit" class="inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">

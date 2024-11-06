@@ -1,0 +1,69 @@
+package web
+
+templ TermsAndConditionsPage() {
+	@Base() {
+		<div id="hello-container">
+			@TermsAndConditionsScreen()
+		</div>
+	}
+}
+
+templ TermsAndConditionsScreen() {
+<div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <img class="h-40 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt="Logo"/>
+    <h2 class="mt-6 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">Terms and Conditions</h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-2xl">
+    <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+      <div class="space-y-6">
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">1. Introduction</h3>
+          <p>Welcome to Organizations for Rare Disease India. These Terms and Conditions govern your use of our website and services. By accessing or using our services, you agree to comply with these terms.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">2. Acceptance of Terms</h3>
+          <p>By using our services, you affirm that you are at least 18 years old and have the legal capacity to enter into this agreement. If you do not agree with any part of these terms, please do not use our services.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">3. Changes to Terms</h3>
+          <p>We reserve the right to modify these Terms and Conditions at any time. We will notify you of any changes by posting the new terms on this page. Your continued use of our services after any modifications will constitute your acceptance of the new terms.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">4. Use of Our Services</h3>
+          <p>You agree to use our services for lawful purposes only. You must not use our services in a way that violates any applicable law or regulation.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">5. Intellectual Property</h3>
+          <p>All content on this website, including text, graphics, logos, and images, is the property of Organizations for Rare Disease India and is protected by copyright and intellectual property laws.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">6. Limitation of Liability</h3>
+          <p>Organizations for Rare Disease India shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of our services.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">7. Governing Law</h3>
+          <p>These Terms and Conditions shall be governed by and construed in accordance with the laws of India.</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-gray-900">8. Contact Information</h3>
+          <p>If you have any questions about these Terms and Conditions, please contact us at:</p>
+          <ul class="list-disc list-inside">
+            <li>Email: <a href="mailto:info@ordindia.foundation" class="text-indigo-600 hover:text-indigo-500">info@ordindia.foundation</a></li>
+            <li>Phone: <span class="text-indigo-600">+91-956078921</span></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
