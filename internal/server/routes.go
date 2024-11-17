@@ -4,6 +4,7 @@ import (
 	"ORDI/cmd/web"
 	"ORDI/internal/handlers/patient"
 	"ORDI/internal/handlers/verification"
+	"ORDI/internal/models"
 	"ORDI/internal/repositories"
 	"encoding/json"
 	"log"
@@ -14,7 +15,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositories.Patient) {
+func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositories.Repository[models.PatientInfo]) {
 	patientHandler := patient.NewPatientHandler(patient.PatientHandlerConfig{
 		PatientRepo: patientRepository,
 		Cache:       s.cache,
@@ -26,14 +27,19 @@ func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositorie
 	r.Post("/patient_login", patientHandler.Login)
 	r.Get("/patient_dashboard", templ.Handler(web.PatientDashboardPage()).ServeHTTP)
 	r.Get("/appointments", patientHandler.Appointment)
+	r.Get("/forgot_password", templ.Handler(web.ForgotPasswordPage()).ServeHTTP)
 }
 
-func (s *Server) RegisterVerificationRoutes(r *chi.Mux, patientRepository repositories.Patient) {
+func (s *Server) RegisterVerificationRoutes(r *chi.Mux, patientRepository repositories.Repository[models.PatientInfo]) {
 	verificationHandler := verification.NewVerificationHandler(verification.VerificationConfig{
 		PatientRepo: patientRepository,
 		Cache:       s.cache,
+		EmailID:     s.email,
 	})
-	r.Get("/verify_patient", verificationHandler.VerifyPatient)
+	r.Get("/verify_patient", verificationHandler.VerifyNewPatient)
+	r.Get("/verify_existing_patient", verificationHandler.VerifyExistingPatient)
+	r.Post("/create_new_password", verificationHandler.CreateNewPassword)
+	r.Post("/forgot_password_submit", verificationHandler.ForgotPassword)
 }
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -58,6 +64,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.RegisterPatientRoutes(r, patientRepository)
 
 	// Verification handler
+	s.RegisterVerificationRoutes(r, patientRepository)
 
 	return r
 }
