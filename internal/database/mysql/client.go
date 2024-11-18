@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"ORDI/internal/database"
+	"ORDI/internal/models"
 	"context"
 	"fmt"
 	"log"
@@ -26,9 +27,9 @@ type SQLConfig struct {
 
 func NewDefaultSqlConnection() database.Database {
 	sqlConfig := SQLConfig{
-		Name:     "ORDI",
-		Username: "root",
-		Password: "",
+		Name:     "ordi",
+		Username: "ordi",
+		Password: "ordi",
 		Host:     "localhost",
 		Port:     3306,
 	}
@@ -52,6 +53,7 @@ func NewMySqlConnection(config SQLConfig) database.Database {
 		log.Fatal(err)
 		return nil
 	}
+	log.Printf("database %+v",database)
 
 	// Check if the database exists and create it if not
 	createDbSQL := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s;", config.Name)
@@ -71,6 +73,13 @@ func NewMySqlConnection(config SQLConfig) database.Database {
 
 	// Opening a connection using gorm.
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
+
+    db.AutoMigrate(&models.DiseaseInfo{})
+    db.AutoMigrate(&models.PatientInfo{})
+    db.AutoMigrate(&models.DoctorInfo{})
+    db.AutoMigrate(&models.PersonalInfo{})
+    db.AutoMigrate(&models.SiblingInfo{})
 
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or

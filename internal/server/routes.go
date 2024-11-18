@@ -26,6 +26,7 @@ func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositorie
 	r.Post("/patient_login", patientHandler.Login)
 	r.Get("/patient_dashboard", templ.Handler(web.PatientDashboardPage()).ServeHTTP)
 	r.Get("/appointments", patientHandler.Appointment)
+	r.Get("/generate_captcha",patientHandler.GenerateCaptcha)
 }
 
 func (s *Server) RegisterVerificationRoutes(r *chi.Mux, patientRepository repositories.Patient) {
