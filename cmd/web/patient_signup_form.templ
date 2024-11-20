@@ -30,7 +30,7 @@ templ PatientSignupScreen() {
 
   <div class="space-y-10 divide-y divide-gray-900/10">
     <div class="mt-8 space-y-10 divide-y divide-gray-900/10">
-      <form action="/patient_submit" method="POST">
+      <form action="/patient_submit" method="POST" onsubmit="return confirmPassword()">
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
           <div class="px-4 sm:px-0">
             <h2 class="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
@@ -125,6 +125,17 @@ templ PatientSignupScreen() {
                   </div>
                   <p class="mt-2 text-sm text-gray-500">Your password must be at least 8 characters long.</p>
                 </div>
+
+                <div class="sm:col-span-4 mt-4">
+                  <label for="confirm_password" class="block text-sm font-medium leading-6 text-gray-900">
+                    Re-enter Password <span class="text-red-600">*</span>
+                  </label>
+                  <div class="mt-2">
+                    <input id="confirm_password" type="password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Enter your password again">
+                  </div>
+                </div>
+
+                <p id="password-error" class="text-sm text-red-600 hidden">Passwords do not match</p>
 
                 <div class="sm:col-span-4">
                   <label for="country" class="block text-sm font-medium leading-6 text-gray-900">
@@ -351,4 +362,7 @@ templ PatientSignupScreen() {
     </div>
   </div>
 </div>
+
+<script src="assets/js/confirmPassword.js"></script>
+
 }

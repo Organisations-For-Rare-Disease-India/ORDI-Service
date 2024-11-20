@@ -3,6 +3,7 @@ package patient
 import (
 	"ORDI/internal/cache"
 	"ORDI/internal/email"
+	"ORDI/internal/models"
 	"ORDI/internal/repositories"
 	"net/http"
 
@@ -17,14 +18,14 @@ type PatientHandlerInterface interface {
 }
 
 type patientHandler struct {
-	patientRepository repositories.Patient
+	patientRepository repositories.Repository[models.PatientInfo]
 	cache             cache.Cache
 	email             email.Email
 	captchaStore base64Captcha.Store
 	captchaDriver  *base64Captcha.DriverDigit
 }
 type PatientHandlerConfig struct {
-	PatientRepo repositories.Patient
+	PatientRepo repositories.Repository[models.PatientInfo]
 	Cache       cache.Cache
 	Email       email.Email
 	CaptchaStore base64Captcha.Store
