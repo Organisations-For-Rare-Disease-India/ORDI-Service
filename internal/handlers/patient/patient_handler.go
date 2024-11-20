@@ -23,7 +23,6 @@ type patientHandler struct {
 	captchaStore base64Captcha.Store
 	captchaDriver  *base64Captcha.DriverDigit
 }
-// base64Captcha.NewDriverDigit(100, 240, 4, 0.7, 80)
 type PatientHandlerConfig struct {
 	PatientRepo repositories.Patient
 	Cache       cache.Cache
