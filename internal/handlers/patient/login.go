@@ -2,16 +2,17 @@ package patient
 
 import (
 	"ORDI/cmd/web"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/a-h/templ"
+	"github.com/gorilla/sessions"
 	"github.com/mojocn/base64Captcha"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var store = sessions.NewCookieStore([]byte("ORDI_CaptchaStore"))
 
 func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -29,18 +30,35 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	err = decoder.Decode(&loginDetails, r.PostForm)
 	if err != nil {
-		log.Fatalf(err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Printf("%+v ::::::::; loginDetails", loginDetails)
-	captchaID , err := s.cache.Get(ctx,"1")
+
+	session, err := store.Get(r, "captcha-session")
 	if err != nil {
-		log.Fatalf(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
 		return
 	}
-	isValid := base64Captcha.DefaultMemStore.Verify(captchaID, loginDetails.Captcha, false)
+
+	// Get the stored CAPTCHA ID
+	storedID, ok := session.Values["captcha_id"].(string)
+	if !ok || storedID == "" {
+		http.Error(w, "CAPTCHA not found in session", http.StatusBadRequest)
+		return
+	}
+	userInput := loginDetails.Captcha
+
+	isValid := s.captchaStore.Verify(storedID, userInput, true)
+	if isValid {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("CAPTCHA validation successful"))
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(`<div id="error-message" class="mb-6 text-sm text-red-600 font-medium">Invalid login or CAPTCHA</div>`))
+		// http.Error(w, "Invalid CAPTCHA", http.StatusBadRequest)
+		return
+	}
 
 	if isValid {
 		log.Printf("%+v", isValid)
@@ -72,29 +90,34 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *patientHandler) GenerateCaptcha(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
 
-	id, captchaImage, err := s.generateCaptcha()
-	err = s.cache.Set(ctx,"1",id,time.Duration(10)*time.Second)
+	// Generate the CAPTCHA
+	id, captchaImage, err := s.generateCaptchaImage()
 	if err != nil {
-		log.Fatalf(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to generate CAPTCHA", http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("%s", captchaImage)
+
+	// Save the CAPTCHA ID in a session
+	session, err := store.Get(r, "captcha-session")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to get session", http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "image/png")
+	session.Values["captcha_id"] = id
 
-	json.NewEncoder(w).Encode(map[string]string{
-		"captchaImage": captchaImage,
-	})
+	// Save the session (write it to the client as a cookie)
+	if err := session.Save(r, w); err != nil {
+		http.Error(w, "Failed to save session", http.StatusInternalServerError)
+		return
+	}
 
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf(`<img id="captcha-image" src="%s" alt="CAPTCHA">`, captchaImage)))
 }
 
-func (s *patientHandler) generateCaptcha() (string, string, error) {
+func (s *patientHandler) generateCaptchaImage() (string, string, error) {
 	captcha := base64Captcha.NewCaptcha(s.captchaDriver, s.captchaStore)
 	id, b64s, _, err := captcha.Generate()
 	if err != nil {

@@ -38,6 +38,6 @@ func NewPatientHandler(config PatientHandlerConfig) PatientHandlerInterface {
 		cache:             config.Cache,
 		email:             config.Email,
 		captchaStore: base64Captcha.DefaultMemStore,
-		captchaDriver: base64Captcha.NewDriverDigit(100, 240, 4, 0.7, 80),
+		captchaDriver: base64Captcha.NewDriverDigit(50, 120, 4, 0.7, 80),
 	}
 }

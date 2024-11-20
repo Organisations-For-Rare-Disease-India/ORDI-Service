@@ -39,7 +39,9 @@ templ LoginScreen() {
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-      <form class="space-y-6" action="/patient_login" method="POST">
+      <form class="space-y-6" action="/patient_login" method="POST" hx-target="#error-message" hx-swap="innerHTML">
+      <div id="error-message" class="mb-6 hidden text-sm text-red-600 font-medium">
+      </div>
         <div>
           <label for="email_id" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
           <div class="mt-2">
@@ -57,15 +59,12 @@ templ LoginScreen() {
         <div>
             <label for="captcha" class="block text-sm font-medium leading-6 text-gray-900">Enter CAPTCHA</label>
             <div class="mt-2 flex items-center space-x-4">
-              <!-- CAPTCHA image with ID for refreshing -->
-              <img src="" alt="CAPTCHA Image" id="captcha-image" class="h-10 w-32 border rounded-md"/>
-              <!-- Refresh CAPTCHA button using HTMX -->
-              <button 
-                      id="captcha-refresh-button"
-                      type="button" 
-                      class="text-indigo-600 hover:text-indigo-500 text-sm font-semibold">
-                Refresh CAPTCHA
-              </button>
+            <img id="captcha-image" src="" alt="CAPTCHA" hx-get="/generate_captcha" hx-trigger="load" hx-target="#captcha-image" hx-swap="outerHTML" class="h-10 w-32 border rounded-md">
+            <img src="/assets/images/refresh-icon.png" alt="Refresh CAPTCHA" 
+                hx-get="/generate_captcha" 
+                hx-target="#captcha-image" 
+                hx-swap="outerHTML" 
+         class="h-5 w-5 cursor-pointer">
             </div>
             <!-- CAPTCHA input -->
             <input id="captcha" name="captcha" type="text" required class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -100,21 +99,11 @@ templ LoginScreen() {
 </div>
 
 <script>
-function loadCaptcha() {
-        fetch("/generate_captcha")
-            .then(response => response.json())
-            .then(data => {
-                // Update only the src property of the existing CAPTCHA image
-                document.getElementById("captcha-image").src = data.captchaImage;
-            })
-            .catch(error => console.error("Error loading CAPTCHA:", error));
-    }
-document.addEventListener("DOMContentLoaded",loadCaptcha);
-document.getElementById("captcha-refresh-button").addEventListener("click", function() {
-        loadCaptcha()
-});
+
 
 </script>
+
+
 }
 
 
