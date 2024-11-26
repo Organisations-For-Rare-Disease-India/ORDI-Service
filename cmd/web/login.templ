@@ -112,11 +112,8 @@ templ LoginScreen() {
     // Collect form data
     const form = document.getElementById("patient-login-form");
     const formData = new FormData(form);
-    for (let [key, value] of formData.entries()) {
-    console.log(`${key}: ${value}`);
-    }
-
-     // Convert FormData to URLSearchParams
+  
+    // Convert FormData to URLSearchParams
     const params = new URLSearchParams();
     formData.forEach((value, key) => {
     params.append(key, value);
@@ -148,7 +145,6 @@ templ LoginScreen() {
       }
       form.submit();
     } catch (error) {
-      console.log(error)
       if (errorMessage) {
         errorMessage.classList.remove("hidden");
         errorMessage.innerHTML = `<p class="text-red-600 font-medium">An error occurred. Please try again.</p>`;

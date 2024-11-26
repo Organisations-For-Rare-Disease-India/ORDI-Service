@@ -3,7 +3,6 @@ package patient
 import (
 	"ORDI/cmd/web"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -63,8 +62,6 @@ func (s *patientHandler) VerifyCaptcha(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	log.Printf("%+v",loginDetails)
-
 	session, err := store.Get(r, "captcha-session")
 	if err != nil {
 		http.Error(w, "Failed to get session", http.StatusInternalServerError)
@@ -80,9 +77,6 @@ func (s *patientHandler) VerifyCaptcha(w http.ResponseWriter, r *http.Request) {
 	userInput := loginDetails.Captcha
 
 	isValid := s.captchaStore.Verify(storedID, userInput, true)
-	log.Print(userInput)
-	log.Print(storedID)
-	log.Print(isValid)
 	if !isValid {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "text/html")
