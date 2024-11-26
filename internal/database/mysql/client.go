@@ -144,3 +144,10 @@ func (s *mysqlService) FindByField(ctx context.Context, entity interface{}, fiel
 	}
 	return nil
 }
+
+func (s *mysqlService) AutoMigrate(ctx context.Context, entity interface{}) error {
+	if err := s.db.WithContext(ctx).AutoMigrate(entity); err != nil {
+		return err
+	}
+	return nil
+}

@@ -22,17 +22,48 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Password string `schema:"password"`
 		Captcha  string `schema:"captcha"`
 	}
+
+	// Find patient from database
+	patient, err := s.patientRepository.FindByField(ctx, "email_id", loginDetails.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if patient == nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// Compare the provided password with the stored hashed password
+	err = bcrypt.CompareHashAndPassword([]byte(patient.Password), []byte(loginDetails.Password))
+	if err != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// Show dashboard if  password matches
+	templ.Handler(web.PatientDashboardPage()).ServeHTTP(w, r)
+}
+
+func (s *patientHandler) VerifyCaptcha(w http.ResponseWriter, r *http.Request) {
+	
+	var loginDetails struct {
+		Email    string `schema:"email_id"`
+		Password string `schema:"password"`
+		Captcha  string `schema:"captcha"`
+	}
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	err = decoder.Decode(&loginDetails, r.PostForm)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	log.Printf("%+v",loginDetails)
 
 	session, err := store.Get(r, "captcha-session")
 	if err != nil {
@@ -49,44 +80,15 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 	userInput := loginDetails.Captcha
 
 	isValid := s.captchaStore.Verify(storedID, userInput, true)
-	if isValid {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("CAPTCHA validation successful"))
-	} else {
+	log.Print(userInput)
+	log.Print(storedID)
+	log.Print(isValid)
+	if !isValid {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(`<div id="error-message" class="mb-6 text-sm text-red-600 font-medium">Invalid login or CAPTCHA</div>`))
-		// http.Error(w, "Invalid CAPTCHA", http.StatusBadRequest)
+		w.Write([]byte(`<div id="error-message" class="mb-6 text-sm text-red-600 font-medium">Wrong CAPTCHA</div>`))
 		return
 	}
-
-	if isValid {
-		log.Printf("%+v", isValid)
-	} else {
-		log.Printf("%+v", isValid)
-	}
-
-	// Find patient from database
-	patient, err := s.patientRepository.FindByField(ctx, "email", loginDetails.Email)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if patient != nil {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
-		return
-	}
-
-	// Compare the provided password with the stored hashed password
-	err = bcrypt.CompareHashAndPassword([]byte(patient.Password), []byte(loginDetails.Password))
-	if err != nil {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
-		return
-	}
-
-	// Show dashboard if  password matches
-	templ.Handler(web.PatientDashboardPage()).ServeHTTP(w, r)
 }
 
 func (s *patientHandler) GenerateCaptcha(w http.ResponseWriter, r *http.Request) {
