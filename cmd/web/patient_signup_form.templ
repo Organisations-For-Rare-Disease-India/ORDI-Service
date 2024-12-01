@@ -1,14 +1,14 @@
 package web
 
-templ PatientSignupPage() {
+templ PatientSignupFormPage(patientSignupHandleEndpoint string) {
 	@Base() {
 		<div id="hello-container">
-			@PatientSignupScreen()
+			@PatientSignupFormScreen(patientSignupHandleEndpoint)
 		</div>
 	}
 }
 
-templ PatientSignupScreen() {
+templ PatientSignupFormScreen(patientSignupHandleEndpoint string) {
     <!--
   This example requires some changes to your config:
   
@@ -31,7 +31,7 @@ templ PatientSignupScreen() {
 
   <div class="space-y-10 divide-y divide-gray-900/10">
     <div class="space-y-10 divide-y divide-gray-900/10">
-      <form action="/patient_submit" method="POST" onsubmit="return confirmPassword()">>
+      <form action={ templ.SafeURL(patientSignupHandleEndpoint)} method="POST" onsubmit="return confirmPassword()">>
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-4 md:grid-cols-3">
           <div class="px-4 sm:px-0">
             <h2 class="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
@@ -343,7 +343,7 @@ templ PatientSignupScreen() {
         </div>
         <div class="col-span-full">
             <div class="flex items-center">
-                <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
+                <input id="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
                 <label for="terms" class="ml-2 block text-sm leading-6 text-gray-900">
                     I have read and agree to the <a href="/terms_and_conditions" class="text-indigo-600 hover:text-indigo-500" target="_blank">Terms and Conditions</a> <span class="text-red-600">*</span>
                 </label>
