@@ -2,12 +2,10 @@ package patient
 
 import (
 	"ORDI/cmd/web"
+	"ORDI/internal/messages"
 	"ORDI/internal/models"
 	"ORDI/internal/utils"
 	"bytes"
-	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"fmt"
 	"time"
 
@@ -26,7 +24,10 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	// Render the submit page with a success message
 	// Render the template with the success flag
-	go templ.Handler(web.PatientSubmitPage()).ServeHTTP(w, r)
+	go templ.Handler(web.SubmitPage(messages.SubmitMessage{
+		Title:   "Successfully uploaded",
+		Message: "A verification email has been sent to your email address. Please check your inbox to verify your account.",
+	})).ServeHTTP(w, r)
 
 	// Parse the form data
 	err := r.ParseForm()
@@ -42,15 +43,8 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Push the data to the database
-	// err = s.AddPatientToDataBase(ctx, patient)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
-
 	// Generate token
-	token, err := generateVerificationtoken()
+	token, err := utils.GenerateVerificationtoken()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -60,7 +54,7 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	go s.cache.Set(ctx, token, patient.Email, 15*time.Minute)
 
 	// Generate html body for verification mail
-	htmlBody := generateVerificationHTML(ctx, token)
+	htmlBody := utils.GenerateVerificationHTML(ctx, token, "verify_patient", "Thank you for Registering to ORDI!")
 	s.email.SendEmail(patient.Email, "ORDI Email Verification", htmlBody, nil, "", "text/html")
 
 	// Hash password
@@ -125,38 +119,4 @@ func patientToPDF(patient models.PatientInfo) (*bytes.Buffer, error) {
 		AddField("Sibling Has Rare Disease", fmt.Sprintf("%t", patient.SiblingHasRareDisease))
 
 	return builder.Output()
-}
-
-// Generate html to send on verification email
-func generateVerificationHTML(ctx context.Context, token string) string {
-
-	// verificationURL := fmt.Sprintf("%s:%d/verify?token=%s", s.url, s.port, token)
-	verificationURL := fmt.Sprintf("ordindia.foundation/verify_patient?token=%s", token)
-	htmlBody := fmt.Sprintf(`
-		<!DOCTYPE html>
-		<html>
-		<head>
-			<title>Verify your email</title>
-		</head>
-		<body>
-			<h2>Thank you for registering!</h2>
-			<p>Please click the link below to verify your email address:</p>
-			<p><a href="%s" style="color: #3498db; text-decoration: none;">Verify Email</a></p>
-			<p>This link is valid for 15 minutes.</p>
-			<p>If you did not register, you can ignore this email.</p>
-		</body>
-		</html>
-`, verificationURL)
-
-	return htmlBody
-}
-
-// Generate verification token
-func generateVerificationtoken() (string, error) {
-	b := make([]byte, 32)
-	if _, err := rand.Read(b); err != nil {
-		return "", err
-	}
-	// Encode the byte slice to a URL-safe base64 string
-	return base64.RawURLEncoding.EncodeToString(b), nil
 }

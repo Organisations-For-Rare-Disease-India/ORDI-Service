@@ -9,21 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type Patient interface {
-	Save(ctx context.Context, patient *models.PatientInfo) error
-
-	FindByID(ctx context.Context, id uint) (*models.PatientInfo, error)
-
-	Delete(ctx context.Context, patient *models.PatientInfo) error
-
-	FindByField(ctx context.Context, field string, value interface{}) (*models.PatientInfo, error)
-}
-
 type patientRepository struct {
 	db database.Database
 }
 
 func NewPatientRepository(db database.Database) *patientRepository {
+	// Create patient table if it doesn't already exist
+	if err := db.AutoMigrate(context.Background(), &models.PatientInfo{}); err != nil {
+		// Panic if unable to create database
+		panic("Failed to migrate patient database: " + err.Error())
+	}
 	return &patientRepository{
 		db: db,
 	}

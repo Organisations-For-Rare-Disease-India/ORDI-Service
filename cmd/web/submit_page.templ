@@ -1,14 +1,17 @@
 package web
 
-templ PatientSubmitPage() {
+import "ORDI/internal/messages"
+
+
+templ SubmitPage(message messages.SubmitMessage) {
 	@Base() {
 		<div id="hello-container">
-			@PatientSubmitScreen()
+			@SubmitScreen(message)
 		</div>
 	}
 }
 
-templ PatientSubmitScreen() {
+templ SubmitScreen(message messages.SubmitMessage) {
     <div class="rounded-md bg-green-50 p-4">
         <div class="flex">
             <div class="flex-shrink-0">
@@ -17,8 +20,8 @@ templ PatientSubmitScreen() {
                 </svg>
             </div>
             <div class="ml-3">
-                <p class="text-sm font-medium text-green-800">Successfully uploaded</p>
-                <p class="text-sm font-medium text-green-800 mt-1">A verification email has been sent to your email address. Please check your inbox to verify your account.</p>
+                <p class="text-sm font-medium text-green-800">{ message.Title }</p>
+                <p class="text-sm font-medium text-green-800 mt-1">{ message.Message }</p>
             </div>
             <div class="ml-auto pl-3">
                 <div class="-mx-1.5 -my-1.5">
