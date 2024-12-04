@@ -9,6 +9,7 @@ require (
 	github.com/gophish/gomail v0.0.0-20200818021916-1f6d0dfd512e
 	github.com/gorilla/schema v1.4.1
 	github.com/joho/godotenv v1.5.1
+	github.com/spf13/viper v1.19.0
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/umahmood/haversine v0.0.0-20151105152445-808ab04add26

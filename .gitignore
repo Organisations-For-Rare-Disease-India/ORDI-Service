@@ -3,4 +3,5 @@ main
 tmp/
 *.rdb
 
+.go-version
 .env
