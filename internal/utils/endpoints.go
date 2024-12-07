@@ -9,6 +9,7 @@ const (
 	PatientLoginSubmit          = "/patient_login_submit"
 	PatientDashboard            = "/patient_dashboard"
 	PatientAppointments         = "/patient_appointments"
+	PatientProfile              = "/patient_profile"
 	PatientVerifyNew            = "/verify_patient"
 	PatientVerifyExisting       = "/verify_existing_patient"
 	PatientNewPassword          = "/patient_create_new_password"
@@ -21,11 +22,13 @@ const (
 	DoctorLoginSubmit           = "/doctor_login_submit"
 	DoctorDashboard             = "/doctor_dashboard"
 	DoctorAppointments          = "/doctor_appointments"
+	DoctorProfile               = "/doctor_profile"
 	DoctorForgotPasswordScreen  = "/doctor_forgot_password"
 	DoctorForgotPasswordSubmit  = "/doctor_forgot_password_submit"
 	DoctorVerifyNew             = "/verify_doctor"
 	DoctorVerifyExisting        = "/verify_existing_doctor"
 	DoctorNewPassword           = "/doctor_create_new_password"
-	HomeLogin                   = "/login"
-	HomeSignup                  = "/signup"
+
+	HomeLogin  = "/login"
+	HomeSignup = "/signup"
 )
