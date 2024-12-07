@@ -5,7 +5,6 @@ import (
 	"ORDI/internal/messages"
 	"ORDI/internal/models"
 	"ORDI/internal/utils"
-	"bytes"
 	"fmt"
 	"time"
 
@@ -20,7 +19,7 @@ var decoder = schema.NewDecoder()
 
 func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var patient models.PatientInfo
+	var patient models.Patient
 
 	// Render the submit page with a success message
 	// Render the template with the success flag
@@ -54,7 +53,7 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	go s.cache.Set(ctx, token, patient.Email, 15*time.Minute)
 
 	// Generate html body for verification mail
-	htmlBody := utils.GenerateVerificationHTML(ctx, token, "verify_patient", "Thank you for Registering to ORDI!")
+	htmlBody := utils.GenerateVerificationHTML(ctx, token, utils.PatientVerifyNew, "Thank you for Registering to ORDI!")
 	s.email.SendEmail(patient.Email, "ORDI Email Verification", htmlBody, nil, "", "text/html")
 
 	// Hash password
@@ -71,7 +70,7 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	s.patientRepository.Save(ctx, &patient)
 
 	// Prepare attachement to send to ORDI
-	pdfBuffer, err := patientToPDF(patient)
+	pdfBuffer, err := utils.PatientToPDF(patient)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -88,35 +87,4 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-// Convert Patient to a PDF
-func patientToPDF(patient models.PatientInfo) (*bytes.Buffer, error) {
-
-	builder := utils.NewPDFBuilder()
-	builder.AddTitle("Patient Information").
-		AddField("Name", fmt.Sprintf("%s %s", patient.FirstName, patient.LastName)).
-		AddField("Gender", patient.Gender).
-		AddField("Father's Name", patient.FatherName).
-		AddField("Father's Occupation", patient.FatherOccupation).
-		AddField("ABHA ID", fmt.Sprintf("%d", patient.ABHAID)).
-		AddField("Email", patient.Email).
-		AddField("Address", fmt.Sprintf("%s, %s, %s, %s, %s",
-			patient.StreetAddress, patient.City, patient.Region, patient.Country, patient.PostalCode)).
-		AddSectionTitle("Doctor Information").
-		AddField("Doctor Name", patient.DoctorName).
-		AddField("Hospital Name", patient.HospitalName).
-		AddField("Doctor Address", patient.DoctorAddress).
-		AddField("Doctor Email", patient.DoctorEmail).
-		AddField("Doctor Contact", patient.DoctorContact).
-		AddField("Doctor Remarks", patient.DoctorRemarks).
-		AddSectionTitle("Disease Information").
-		AddField("Disease Name", patient.DiseaseName).
-		AddField("Symptoms", patient.DiseaseSymptoms).
-		AddSectionTitle("Sibling Information").
-		AddField("Has Brother", fmt.Sprintf("%t", patient.HasBrother)).
-		AddField("Has Sister", fmt.Sprintf("%t", patient.HasSister)).
-		AddField("Sibling Has Rare Disease", fmt.Sprintf("%t", patient.SiblingHasRareDisease))
-
-	return builder.Output()
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/mojocn/base64Captcha"
 )
 
-type PatientHandlerInterface interface {
+type Patient interface {
 	Signup(http.ResponseWriter, *http.Request)
 	Login(http.ResponseWriter, *http.Request)
 	Appointment(http.ResponseWriter, *http.Request)
@@ -19,21 +19,21 @@ type PatientHandlerInterface interface {
 }
 
 type patientHandler struct {
-	patientRepository repositories.Repository[models.PatientInfo]
+	patientRepository repositories.Repository[models.Patient]
 	cache             cache.Cache
 	email             email.Email
 	captchaStore base64Captcha.Store
 	captchaDriver  *base64Captcha.DriverDigit
 }
 type PatientHandlerConfig struct {
-	PatientRepo repositories.Repository[models.PatientInfo]
+	PatientRepo repositories.Repository[models.Patient]
 	Cache       cache.Cache
 	Email       email.Email
 	CaptchaStore base64Captcha.Store
 	CaptchaDriver  base64Captcha.DriverDigit
 }
 
-func NewPatientHandler(config PatientHandlerConfig) PatientHandlerInterface {
+func NewPatientHandler(config PatientHandlerConfig) Patient {
 	return &patientHandler{
 		patientRepository: config.PatientRepo,
 		cache:             config.Cache,

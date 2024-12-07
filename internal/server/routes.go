@@ -2,10 +2,12 @@ package server
 
 import (
 	"ORDI/cmd/web"
+	"ORDI/internal/handlers/doctor"
 	"ORDI/internal/handlers/patient"
 	"ORDI/internal/handlers/verification"
 	"ORDI/internal/models"
 	"ORDI/internal/repositories"
+	"ORDI/internal/utils"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -15,33 +17,60 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositories.Repository[models.PatientInfo]) {
+func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositories.Repository[models.Patient]) {
 	patientHandler := patient.NewPatientHandler(patient.PatientHandlerConfig{
 		PatientRepo: patientRepository,
 		Cache:       s.cache,
 		Email:       s.email,
 	})
 
-	r.Get("/patient_signup", templ.Handler(web.PatientSignupPage()).ServeHTTP)
-	r.Post("/patient_submit", patientHandler.Signup)
-	r.Post("/patient_login", patientHandler.Login)
-	r.Get("/patient_dashboard", templ.Handler(web.PatientDashboardPage()).ServeHTTP)
-	r.Get("/appointments", patientHandler.Appointment)
-	r.Get("/generate_captcha",patientHandler.GenerateCaptcha)
-	r.Post("/verify_captcha",patientHandler.VerifyCaptcha)
-	r.Get("/forgot_password", templ.Handler(web.ForgotPasswordPage()).ServeHTTP)
+	r.Get(utils.PatientLoginScreen, templ.Handler(web.LoginPage(utils.PatientLoginSubmit, utils.PatientForgotPasswordScreen, utils.PatientSignupSteps)).ServeHTTP)
+	r.Post(utils.PatientSignupSubmit, patientHandler.Signup)
+	r.Post(utils.PatientLoginSubmit, patientHandler.Login)
+	r.Get(utils.PatientDashboard, templ.Handler(web.PatientDashboardPage()).ServeHTTP)
+	r.Get(utils.PatientAppointments, patientHandler.Appointment)
+	r.Get(utils.PatientForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.PatientForgotPasswordSubmit)).ServeHTTP)
+	r.Get(utils.PatientSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreatePatientSignupStepsMessage(), utils.PatientSignupForm)).ServeHTTP)
+	r.Get(utils.PatientSignupForm, templ.Handler(web.PatientSignupFormPage(utils.PatientSignupSubmit)).ServeHTTP)
+
+	patientVerificationHandler := verification.NewPatientVerificationHandler(verification.PatientVerificationConfig{
+		Repository: patientRepository,
+		Cache:      s.cache,
+		Email:      s.email,
+	})
+	r.Get(utils.PatientVerifyNew, patientVerificationHandler.VerifyNewUser)
+	r.Get(utils.PatientVerifyExisting, patientVerificationHandler.VerifyExistingUser)
+	r.Post(utils.PatientNewPassword, patientVerificationHandler.CreateNewPassword)
+	r.Post(utils.PatientForgotPasswordSubmit, patientVerificationHandler.ForgotPassword)
+
 }
 
-func (s *Server) RegisterVerificationRoutes(r *chi.Mux, patientRepository repositories.Repository[models.PatientInfo]) {
-	verificationHandler := verification.NewVerificationHandler(verification.VerificationConfig{
-		PatientRepo: patientRepository,
-		Cache:       s.cache,
-		EmailID:     s.email,
+func (s *Server) RegisterDoctorRoutes(r *chi.Mux, doctorRepository repositories.Repository[models.Doctor]) {
+	doctorHandler := doctor.NewDoctorHandler(doctor.DoctorHandlerConfig{
+		DoctorRepo: doctorRepository,
+		Cache:      s.cache,
+		Email:      s.email,
 	})
-	r.Get("/verify_patient", verificationHandler.VerifyNewPatient)
-	r.Get("/verify_existing_patient", verificationHandler.VerifyExistingPatient)
-	r.Post("/create_new_password", verificationHandler.CreateNewPassword)
-	r.Post("/forgot_password_submit", verificationHandler.ForgotPassword)
+
+	r.Get(utils.DoctorLoginScreen, templ.Handler(web.LoginPage(utils.DoctorLoginSubmit, utils.DoctorForgotPasswordScreen, utils.DoctorSignupSteps)).ServeHTTP)
+	r.Post(utils.DoctorSignupSubmit, doctorHandler.Signup)
+	r.Post(utils.DoctorLoginSubmit, doctorHandler.Login)
+	r.Get(utils.DoctorDashboard, templ.Handler(web.PatientDashboardPage()).ServeHTTP)
+	r.Get(utils.DoctorAppointments, doctorHandler.Appointment)
+	r.Get(utils.DoctorForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.DoctorForgotPasswordSubmit)).ServeHTTP)
+	r.Get(utils.DoctorSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreatePatientSignupStepsMessage(), utils.DoctorSignupForm)).ServeHTTP)
+	r.Get(utils.DoctorSignupForm, templ.Handler(web.DoctorSignupFormPage(utils.DoctorSignupSubmit)).ServeHTTP)
+
+	doctorVerificationHandler := verification.NewDoctorVerificationHandler(verification.DoctorVerificationConfig{
+		Repository: doctorRepository,
+		Cache:      s.cache,
+		Email:      s.email,
+	})
+	r.Get(utils.DoctorVerifyNew, doctorVerificationHandler.VerifyNewUser)
+	r.Get(utils.DoctorVerifyExisting, doctorVerificationHandler.VerifyExistingUser)
+	r.Post(utils.DoctorNewPassword, doctorVerificationHandler.CreateNewPassword)
+	r.Post(utils.DoctorForgotPasswordSubmit, doctorVerificationHandler.ForgotPassword)
+
 }
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -56,17 +85,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	fileServer := http.FileServer(http.FS(web.Files))
 	r.Handle("/assets/*", fileServer)
 
-	r.Get("/login", templ.Handler(web.LoginPage()).ServeHTTP)
-	r.Get("/signup", templ.Handler(web.SignupPage()).ServeHTTP)
-	r.Get("/signup_steps", templ.Handler(web.SignupStepsPage()).ServeHTTP)
-	r.Get("/terms_and_conditions", templ.Handler(web.TermsAndConditionsPage()).ServeHTTP)
+	r.Get(utils.HomeLogin, templ.Handler(web.ChooseRolePage(utils.DoctorLoginScreen, utils.PatientLoginScreen)).ServeHTTP)
+	r.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
 
 	// Patient specific handlers
 	patientRepository := repositories.NewPatientRepository(s.db)
 	s.RegisterPatientRoutes(r, patientRepository)
 
-	// Verification handler
-	s.RegisterVerificationRoutes(r, patientRepository)
+	// Doctor specific handlers
+	doctorRepository := repositories.NewDoctorRepository(s.db)
+	s.RegisterDoctorRoutes(r, doctorRepository)
 
 	return r
 }

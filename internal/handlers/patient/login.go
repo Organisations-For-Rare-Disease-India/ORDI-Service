@@ -13,14 +13,31 @@ import (
 
 var store = sessions.NewCookieStore([]byte("ORDI_CaptchaStore"))
 
+type LoginDetails struct {
+	Email    string `schema:"email_id"`
+	Password string `schema:"password"`
+	Captcha  string `schema:"captcha"`
+}
+
 func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	var loginDetails LoginDetails
 
-	var loginDetails struct {
-		Email    string `schema:"email_id"`
-		Password string `schema:"password"`
-		Captcha  string `schema:"captcha"`
+	// Parse the form data
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+
+	// Decode the form data into the Patient struct
+	err = decoder.Decode(&loginDetails, r.PostForm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Printf("email_id : %s", loginDetails.Email)
 
 	// Find patient from database
 	patient, err := s.patientRepository.FindByField(ctx, "email_id", loginDetails.Email)
@@ -46,7 +63,7 @@ func (s *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *patientHandler) VerifyCaptcha(w http.ResponseWriter, r *http.Request) {
-	
+
 	var loginDetails struct {
 		Email    string `schema:"email_id"`
 		Password string `schema:"password"`

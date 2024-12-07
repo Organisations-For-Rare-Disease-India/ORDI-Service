@@ -15,7 +15,7 @@ type patientRepository struct {
 
 func NewPatientRepository(db database.Database) *patientRepository {
 	// Create patient table if it doesn't already exist
-	if err := db.AutoMigrate(context.Background(), &models.PatientInfo{}); err != nil {
+	if err := db.AutoMigrate(context.Background(), &models.Patient{}); err != nil {
 		// Panic if unable to create database
 		panic("Failed to migrate patient database: " + err.Error())
 	}
@@ -24,24 +24,24 @@ func NewPatientRepository(db database.Database) *patientRepository {
 	}
 }
 
-func (r *patientRepository) Save(ctx context.Context, patient *models.PatientInfo) error {
+func (r *patientRepository) Save(ctx context.Context, patient *models.Patient) error {
 	return r.db.Save(ctx, patient)
 }
 
-func (r *patientRepository) FindByID(ctx context.Context, id uint) (*models.PatientInfo, error) {
-	var patient models.PatientInfo
+func (r *patientRepository) FindByID(ctx context.Context, id uint) (*models.Patient, error) {
+	var patient models.Patient
 	if err := r.db.FindByID(ctx, id, &patient); err != nil {
 		return nil, err
 	}
 	return &patient, nil
 }
 
-func (r *patientRepository) Delete(ctx context.Context, patient *models.PatientInfo) error {
+func (r *patientRepository) Delete(ctx context.Context, patient *models.Patient) error {
 	return r.db.Delete(ctx, patient)
 }
 
-func (r *patientRepository) FindByField(ctx context.Context, field string, value interface{}) (*models.PatientInfo, error) {
-	var patient models.PatientInfo
+func (r *patientRepository) FindByField(ctx context.Context, field string, value interface{}) (*models.Patient, error) {
+	var patient models.Patient
 	if err := r.db.FindByField(ctx, &patient, field, value); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil // No patient found
