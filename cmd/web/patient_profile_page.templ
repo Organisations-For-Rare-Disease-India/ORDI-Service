@@ -1,17 +1,20 @@
 package web
 
-templ PatientDashboardPage(firstName string, profileEndpoint string, ) {
-	@Base() {
-		<div id="hello-container">
-			@PatientDashboard(firstName, profileEndpoint)
-		</div>
-	}
+import "ORDI/internal/models"
+import "strconv"
+
+
+templ PatientProfilePage(patient *models.Patient) {
+    @Base() {
+        <div id="hello-container">
+            @PatientProfile(patient)
+        </div>
+    }
 }
 
-
-
-templ PatientDashboard(firstName string, profileEndpoint string) {
-<div class="min-h-full">
+templ PatientProfile(patient *models.Patient) {
+    
+<div class="overflow-hidden bg-white shadow sm:rounded-lg">
   <nav class="bg-white shadow-sm">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 justify-between">
@@ -58,7 +61,6 @@ templ PatientDashboard(firstName string, profileEndpoint string) {
             -->
             <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="dropdown">
               <!-- Active: "bg-gray-100", Not Active: "" -->
-              <a href={ templ.SafeURL(profileEndpoint)}class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
               <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
               <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
             </div>
@@ -69,22 +71,45 @@ templ PatientDashboard(firstName string, profileEndpoint string) {
 
     <!-- Mobile menu, show/hide based on menu state. -->
   </nav>
-
-  <div class="bg-indigo-700 py-10">
-    <main>
-      <div class="bg-indigo-700 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <!-- Your content -->
-        <div class="bg-indigo-700">
-            <div class="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Hi { firstName }, Our team is currently in the process of assigning a doctor for you.</h2>
-                <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-indigo-200">In the meantime, we invite you to explore our website, browse through our informative blogs, or check out the latest clinical trials available relevant to you</p>
-                </div>
-            </div>
+  
+    <div class="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden sm:rounded-lg mt-8">
+        <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Patient Information</h3>
+            <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details</p>
         </div>
-      </div>
-    </main>
-  </div>
+        <div class="border-gray-100">
+            <dl class="divide-y divide-gray-100">
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">First Name</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.FirstName } </dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">Last Name</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.LastName }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">Email address</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.Email }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">Gender</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.Gender }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">City</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.City }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">PostCode</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.PostalCode }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">ABHA ID</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ strconv.Itoa(patient.ABHAID) }</dd>
+            </div>
+            </dl>
+        </div>
+    </div>
 </div>
 <script src="assets/js/toggleDropDown.js"></script>
 }

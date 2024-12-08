@@ -2,14 +2,14 @@ package models
 
 import "gorm.io/gorm"
 
-type PatientInfo struct {
-	PersonalInfo `schema:",inline" gorm:"embedded"`
-	DoctorInfo   `schema:",inline" gorm:"embedded"`
-	SiblingInfo  `schema:",inline" gorm:"embedded"`
-	Verified     bool `gorm:"column:verified"` // Add this line
+type Patient struct {
+	PatientPersonalInfo `schema:",inline" gorm:"embedded"`
+	PatientDoctorInfo   `schema:",inline" gorm:"embedded"`
+	PatientSiblingInfo  `schema:",inline" gorm:"embedded"`
+	Verified            bool `gorm:"column:verified"` // Add this line
 }
 
-type PersonalInfo struct {
+type PatientPersonalInfo struct {
 	gorm.Model              // Embed model for ID, CreatedAt, UpdatedAt, DeletedAt
 	FirstName        string `schema:"first_name" gorm:"column:first_name"`
 	LastName         string `schema:"last_name" gorm:"column:last_name"`
@@ -26,7 +26,7 @@ type PersonalInfo struct {
 	PostalCode       string `schema:"postal_code" gorm:"column:postal_code"`
 }
 
-type DoctorInfo struct {
+type PatientDoctorInfo struct {
 	DoctorName    string `schema:"doctor_name" gorm:"column:doctor_name"`
 	HospitalName  string `schema:"hospital_name" gorm:"column:hospital_name"`
 	DoctorAddress string `schema:"doctor_address" gorm:"column:doctor_address"`
@@ -36,7 +36,7 @@ type DoctorInfo struct {
 	DiseaseInfo   `schema:",inline"`
 }
 
-type SiblingInfo struct {
+type PatientSiblingInfo struct {
 	HasBrother            bool `schema:"has_brother" gorm:"column:has_brother"`
 	HasSister             bool `schema:"has_sister" gorm:"column:has_sister"`
 	SiblingHasRareDisease bool `schema:"sibling_has_rare_disease" gorm:"column:sibling_has_rare_disease"`

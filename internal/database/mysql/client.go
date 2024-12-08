@@ -17,28 +17,27 @@ type mysqlService struct {
 }
 
 type SQLConfig struct {
-	Name     string
-	Username string
-	Password string
-	Host     string
-	Port     int
+	DatabaseName string
+	Username     string
+	Password     string
+	Host         string
+	Port         int
 }
 
 func NewDefaultSqlConnection() database.Database {
 	sqlConfig := SQLConfig{
-		Name:     "ORDI",
-		Username: "root",
-		Password: "",
-		Host:     "localhost",
-		Port:     3306,
+		DatabaseName: "ORDI",
+		Username:     "root",
+		Password:     "",
+		Host:         "localhost",
+		Port:         3306,
 	}
 	return NewMySqlConnection(sqlConfig)
 }
 
 func NewMySqlConnection(config SQLConfig) database.Database {
-
 	// Constructing the data source name string
-	createDBDsn := fmt.Sprintf(
+	rootDSN := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/?charset=utf8mb4&parseTime=True&loc=Local",
 		config.Username,
 		config.Password,
@@ -46,18 +45,25 @@ func NewMySqlConnection(config SQLConfig) database.Database {
 		config.Port,
 	)
 
-	// Open connection to MySQL server without selecting a database
-	database, err := gorm.Open(mysql.Open(createDBDsn), &gorm.Config{})
+	// Open connection to MySQL server
+	rootDB, err := gorm.Open(mysql.Open(rootDSN), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		log.Fatal("Failed to connect to MySQL server: ", err)
 	}
 
-	// Check if the database exists and create it if not
-	createDbSQL := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s;", config.Name)
-	if err := database.Exec(createDbSQL).Error; err != nil {
-		log.Fatal(err)
-		return nil
+	// Check if the database exists
+	var exists int
+	rootDB.Raw("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", config.DatabaseName).Scan(&exists)
+
+	if exists == 0 {
+		// Create the database
+		err = rootDB.Exec(fmt.Sprintf("CREATE DATABASE `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", config.DatabaseName)).Error
+		if err != nil {
+			log.Fatal("Failed to create database: ", err)
+		}
+		log.Printf("Database %s created successfully", config.DatabaseName)
+	} else {
+		log.Printf("Database %s already exists", config.DatabaseName)
 	}
 
 	dsn := fmt.Sprintf(
@@ -66,7 +72,7 @@ func NewMySqlConnection(config SQLConfig) database.Database {
 		config.Password,
 		config.Host,
 		config.Port,
-		config.Name,
+		config.DatabaseName,
 	)
 
 	// Opening a connection using gorm.
@@ -82,6 +88,7 @@ func NewMySqlConnection(config SQLConfig) database.Database {
 		db: db,
 	}
 	return mysqlInstance
+
 }
 
 func (s *mysqlService) Health() map[string]string {

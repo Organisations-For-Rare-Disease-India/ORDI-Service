@@ -1,14 +1,16 @@
 package web
 
-templ SignupStepsPage() {
+import "ORDI/internal/messages"
+
+templ SignupStepsPage(msg messages.SignupStepsMessage, followOnEndpoint string) {
 	@Base() {
 		<div id="hello-container">
-			@SignUpSteps()
+			@SignUpSteps(msg, followOnEndpoint)
 		</div>
 	}
 }
 
-templ SignUpSteps() {
+templ SignUpSteps(msgs messages.SignupStepsMessage, followOnEndpoint string) {
     <div class="bg-white">
     <div class="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
 
@@ -19,69 +21,31 @@ templ SignUpSteps() {
             <h3 class="text-3xl sm:text-5xl leading-normal font-extrabold tracking-tight text-gray-900">
                 How it <span class="text-indigo-600">Works?</span>
             </h3>
-
         </div>
 
         <div class="mt-20">
             <ul class="">
-
-                <li class="text-left mb-10">
-                    <div class="flex flex-row items-start">
-                        <div class="flex flex-col items-center justify-center mr-5">
-                            <div
-                                class="flex items-center justify-center h-20 w-20 rounded-full bg-indigo-500 text-white border-4 border-white text-xl font-semibold">
-                                1
+                for _, step := range msgs.Steps {
+                    <li class="text-left mb-10">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col items-center justify-center mr-5">
+                                <div
+                                    class="flex items-center justify-center h-20 w-20 rounded-full bg-indigo-500 text-white border-4 border-white text-xl font-semibold">
+                                    1
+                                </div>
+                                <span class="text-gray-500">STEP</span>
                             </div>
-                            <span class="text-gray-500">STEP</span>
-                        </div>
-                        <div class="bg-gray-100 p-5 pb-10 ">
-                            <h4 class="text-lg leading-6 font-semibold text-gray-900">Build Your Account</h4>
-                            <p class="mt-2 text-base leading-6 text-gray-500">
-                                Begin by setting up your account on our platform. 
-                                Share essential details like your medical history and contact information, so we can better understand and address your needs.
-                            </p>
-                        </div>
-                    </div>
-                </li>
-                <li class="text-left mb-10">
-                    <div class="flex flex-row items-start">
-                        <div class="flex flex-col items-center justify-center mr-5">
-                            <div
-                                class="flex items-center justify-center h-20 w-20 rounded-full bg-indigo-500 text-white border-4 border-white text-xl font-semibold">
-                                2
+                            <div class="bg-gray-100 p-5 pb-10 ">
+                                <h4 class="text-lg leading-6 font-semibold text-gray-900">{step.Heading}</h4>
+                                <p class="mt-2 text-base leading-6 text-gray-500">{step.Body}</p>
                             </div>
-                            <span class="text-gray-500">STEP</span>
                         </div>
-                        <div class="bg-gray-100 p-5 pb-10 ">
-                            <h4 class="text-lg leading-6 font-semibold text-gray-900">Verify Your Account</h4>
-                            <p class="mt-2 text-base leading-6 text-gray-500">
-                                After entering your details, verify your account by confirming your email, phone number, and any necessary documents. 
-                                This ensures your information is secure and accurate.
-                            </p>
-                        </div>
-                    </div>
-                </li>
-                <li class="text-left mb-10">
-                    <div class="flex flex-row items-start">
-                        <div class="flex flex-col items-center justify-center mr-5">
-                            <div
-                                class="flex items-center justify-center h-20 w-20 rounded-full bg-indigo-500 text-white border-4 border-white text-xl font-semibold">
-                                3
-                            </div>
-                            <span class="text-gray-500">STEP</span>
-                        </div>
-                        <div class="bg-gray-100 p-5 pb-10 ">
-                            <h4 class="text-lg leading-6 font-semibold text-gray-900">Connect with the Right Doctors and Receive Ongoing Support</h4>
-                            <p class="mt-2 text-base leading-6 text-gray-500">
-                                Once verified, we’ll connect you with the right doctors specializing in your condition. 
-                                We’ll be with you throughout your journey, providing ongoing support and guidance as needed.
-                            </p>
-                        </div>
-                    </div>
-                </li>
+                    </li>
+                }
                 <li>
-                    <a href="/patient_signup" class="arrow-button text-xl hover:text-xl inline-flex items-center rounded-md bg-blue-50 px-4 py-2 text-xl font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        <span>Continue as Patient</span>
+                
+                    <a href={ templ.SafeURL(followOnEndpoint) } class="arrow-button text-xl hover:text-xl inline-flex items-center rounded-md bg-blue-50 px-4 py-2 text-xl font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                        <span>Continue</span>
                         <span class="arrow ml-2 text-xl">&#8594;</span>
                     </a>
                  </li>
