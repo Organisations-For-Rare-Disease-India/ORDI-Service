@@ -16,7 +16,7 @@ import (
 
 const (
 	TokenHeader                = "token"
-	TokenRequiredMessage       = "Token is required"
+	TokenRequiredMessage       = "Token is invalid or expired"
 	InvalidRequestMessage      = "Invalid request"
 	UnauthorizedRequestMessage = "Unauthorized request"
 	InvalidCredentialsMessage  = "Invalid username or password"
@@ -57,6 +57,7 @@ func (s *verificationHandler) VerifyNewPatient(w http.ResponseWriter, r *http.Re
 	email, err := s.verifyRequest(ctx, r, TokenHeader)
 	if err != nil {
 		http.Error(w, TokenRequiredMessage, http.StatusUnauthorized)
+		return
 	}
 	// User is verified
 
@@ -88,6 +89,7 @@ func (s *verificationHandler) VerifyExistingPatient(w http.ResponseWriter, r *ht
 	_, err := s.verifyRequest(ctx, r, TokenHeader)
 	if err != nil {
 		http.Error(w, TokenRequiredMessage, http.StatusUnauthorized)
+		return
 	}
 	// User is verified
 

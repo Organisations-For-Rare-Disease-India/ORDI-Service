@@ -5,3 +5,16 @@
 .float-right {
     float: right;
 }
+
+.ordi-icon-justify {
+    top: 3%;
+    left: 10%;
+}
+
+.max-w-4xl {
+    max-width: 60rem;
+}
+
+.signup-page-container {
+    margin-left: 15%;
+}
