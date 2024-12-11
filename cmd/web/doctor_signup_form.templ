@@ -24,14 +24,23 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
   ```
 -->
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <img class="h-30 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt=""/>
+  <header class="absolute ordi-icon-justify z-50">
+      <div class="flex lg:flex-1">
+				<a href="/" class="-m-1.5 p-1.5">
+					<span class="sr-only">Organization for Rare Diseases India</span>
+					<img class="h-40 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt=""/>
+				</a>
+			</div>
+  </header>
+
+  <div class="sm:mx-auto sm:w-full sm:max-w-md mt-32">
+    <h2 class="mt-8 ml-3 text-base font-semibold leading-7 text-gray-900 text-center">Registration</h2>
   </div>
 
   <div class="space-y-10 divide-y divide-gray-900/10">
-    <div class="mt-8 space-y-10 divide-y divide-gray-900/10">
+    <div class="space-y-10 divide-y divide-gray-900/10">
       <form action={ templ.SafeURL(doctorSignupHandleEndpoint)} method="POST" onsubmit="return confirmPassword()">
-        <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-4 md:grid-cols-3">
           <div class="px-4 sm:px-0">
             <h2 class="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
             <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your personal and contact details. </p>

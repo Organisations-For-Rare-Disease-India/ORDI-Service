@@ -10,22 +10,25 @@ templ ChooseRolePage(doctorEndpoint string, patientEndpoint string) {
 
 templ ChooseRoleScreen(doctorEndpoint string, patientEndpoint string) {
   <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <img class="h-40 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt=""/>
-    </div>
-
+    <header class="absolute ordi-icon-justify z-50">
+      <div class="flex lg:flex-1">
+				<a href="/" class="-m-1.5 p-1.5">
+					<span class="sr-only">Organization for Rare Diseases India</span>
+					<img class="h-40 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt=""/>
+				</a>
+			</div>
+    </header> 
     <!-- Main Container -->
-    <div class="py-12">
-      <div class="mx-auto grid max-w-7xl grid-cols-1 gap-y-10 gap-x-8 px-6 lg:px-8 xl:grid-cols-2">
-        
+    <div class="py-6 signup-page-container">
+      <div class="mx-auto grid max-w-4xl grid-cols-1 gap-y-10 gap-x-8 px-6 lg:px-8 xl:grid-cols-2">
         <!-- Doctor Card -->
         <div class="bg-white shadow-xl rounded-lg p-6">
           <img class="aspect-[2/2] w-full rounded-2xl object-cover" src="https://images.unsplash.com/photo-1576669801775-ff43c5ab079d?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
           <h3 class="mt-6 text-5xl font-semibold leading-8 text-gray-900">Doctor</h3>
           <p class="mt-4 text-base leading-7 text-gray-600">Help us fight rare diseases?</p>
-          <a href={ templ.SafeURL(doctorEndpoint) } class="arrow-button inline-flex mt-6 items-center rounded-md bg-blue-50 px-4 py-2 text-xl font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+          <a href={ templ.SafeURL(doctorEndpoint) } class="arrow-button inline-flex mt-6 items-center rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
             <span>Continue as Doctor</span>
-            <span class="arrow ml-2 text-xl">&#8594;</span>
+            <span class="arrow ml-2 text-sm">&#8594;</span>
           </a>
         </div>
 
@@ -34,9 +37,9 @@ templ ChooseRoleScreen(doctorEndpoint string, patientEndpoint string) {
           <img class="aspect-[2/2] w-full rounded-2xl object-cover" src="https://images.unsplash.com/photo-1578496781197-b85385c7f0b3?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
           <h3 class="mt-6 text-5xl font-semibold leading-8 text-gray-900">Patient</h3>
           <p class="mt-4 text-base leading-7 text-gray-600">Are you a patient living with a rare disease?</p>
-          <a href={ templ.SafeURL(patientEndpoint) } class="arrow-button inline-flex mt-6 items-center rounded-md bg-blue-50 px-4 py-2 text-xl font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+          <a href={ templ.SafeURL(patientEndpoint) } class="arrow-button inline-flex mt-6 items-center rounded-md bg-blue-50 px-4 py-2 text-sm font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
             <span>Continue as Patient</span>
-            <span class="arrow ml-2 text-xl">&#8594;</span>
+            <span class="arrow ml-2 text-sm">&#8594;</span>
           </a>
         </div>
 
