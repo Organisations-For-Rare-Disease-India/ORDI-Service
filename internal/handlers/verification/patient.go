@@ -158,7 +158,7 @@ func (p *patientVerification) VerifyNewUser(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		if patient != nil {
+		if patient == nil {
 			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			return
 		}

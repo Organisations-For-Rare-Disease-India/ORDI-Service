@@ -28,4 +28,6 @@ const (
 	DoctorNewPassword           = "/doctor_create_new_password"
 	HomeLogin                   = "/login"
 	HomeSignup                  = "/signup"
+	GenerateCaptcha             = "/generate_captcha"
+	VerifyCaptcha               = "/verify_captcha"
 )

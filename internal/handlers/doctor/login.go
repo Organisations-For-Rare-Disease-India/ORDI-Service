@@ -14,6 +14,7 @@ func (d *doctorHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var loginDetails struct {
 		Email    string `schema:"email_id"`
 		Password string `schema:"password"`
+		Captcha  string `schema:"captcha"`
 	}
 
 	err := r.ParseForm()

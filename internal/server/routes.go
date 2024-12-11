@@ -42,6 +42,8 @@ func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositorie
 	r.Get(utils.PatientVerifyExisting, patientVerificationHandler.VerifyExistingUser)
 	r.Post(utils.PatientNewPassword, patientVerificationHandler.CreateNewPassword)
 	r.Post(utils.PatientForgotPasswordSubmit, patientVerificationHandler.ForgotPassword)
+	r.Get(utils.GenerateCaptcha, patientHandler.GenerateCaptcha)
+	r.Post(utils.VerifyCaptcha, patientHandler.VerifyCaptcha)
 
 }
 
@@ -58,7 +60,7 @@ func (s *Server) RegisterDoctorRoutes(r *chi.Mux, doctorRepository repositories.
 	r.Get(utils.DoctorDashboard, templ.Handler(web.PatientDashboardPage()).ServeHTTP)
 	r.Get(utils.DoctorAppointments, doctorHandler.Appointment)
 	r.Get(utils.DoctorForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.DoctorForgotPasswordSubmit)).ServeHTTP)
-	r.Get(utils.DoctorSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreatePatientSignupStepsMessage(), utils.DoctorSignupForm)).ServeHTTP)
+	r.Get(utils.DoctorSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreateDoctorSignupStepsMessage(), utils.DoctorSignupForm)).ServeHTTP)
 	r.Get(utils.DoctorSignupForm, templ.Handler(web.DoctorSignupFormPage(utils.DoctorSignupSubmit)).ServeHTTP)
 
 	doctorVerificationHandler := verification.NewDoctorVerificationHandler(verification.DoctorVerificationConfig{

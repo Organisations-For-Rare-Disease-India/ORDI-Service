@@ -12,7 +12,7 @@ templ SignupStepsPage(msg messages.SignupStepsMessage, followOnEndpoint string) 
 
 templ SignUpSteps(msgs messages.SignupStepsMessage, followOnEndpoint string) {
     <div class="bg-white">
-    <div class="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
+    <div class="max-w-screen-md mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-between m-registration">
 
         <div class="text-center">
             <p class="mt-4 text-sm leading-7 text-gray-500 font-regular">
@@ -42,7 +42,7 @@ templ SignUpSteps(msgs messages.SignupStepsMessage, followOnEndpoint string) {
                         </div>
                     </li>
                 }
-                <li>
+                <li class="float-right">
                 
                     <a href={ templ.SafeURL(followOnEndpoint) } class="arrow-button text-xl hover:text-xl inline-flex items-center rounded-md bg-blue-50 px-4 py-2 text-xl font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         <span>Continue</span>
