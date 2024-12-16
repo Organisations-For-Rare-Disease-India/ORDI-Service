@@ -33,11 +33,11 @@ func NewServer() *http.Server {
 
 	// Add the DB, email and cache configs from environment and initialize them
 	dbConfig := mysql.SQLConfig{
-		Name:     envConfig.DBName,
-		Username: envConfig.DBUser,
-		Password: envConfig.DBPass,
-		Host:     envConfig.DBHost,
-		Port:     envConfig.DBPort,
+		DatabaseName: envConfig.DBName,
+		Username:     envConfig.DBUser,
+		Password:     envConfig.DBPass,
+		Host:         envConfig.DBHost,
+		Port:         envConfig.DBPort,
 	}
 
 	emailConfig := emailSender.EmailConfig{

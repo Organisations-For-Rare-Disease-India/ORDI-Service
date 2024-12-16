@@ -6,3 +6,5 @@ tmp/
 .go-version
 .env
 .DS_Store
+node_modules/
+.env
