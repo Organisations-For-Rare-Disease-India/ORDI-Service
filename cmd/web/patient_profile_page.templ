@@ -1,21 +1,28 @@
 package web
 
-templ PatientDashboardPage(firstName string, profileEndpoint string, ) {
-	@Base() {
-		<div id="hello-container">
-			@PatientDashboard(firstName, profileEndpoint)
-		</div>
-	}
+import "ORDI/internal/models"
+import "strconv"
+
+
+templ PatientProfilePage(patient *models.Patient) {
+    @Base() {
+        <div id="hello-container">
+            @PatientProfile(patient)
+        </div>
+    }
 }
 
-
-
-templ PatientDashboard(firstName string, profileEndpoint string) {
-<div class="min-h-full">
+templ PatientProfile(patient *models.Patient) {
+    
+<div class="overflow-hidden bg-white shadow sm:rounded-lg">
   <nav class="bg-white shadow-sm">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 justify-between">
         <div class="flex">
+          <div class="flex flex-shrink-0 items-center">
+            <img class="block h-8 w-auto lg:hidden" src="/assets/images/ordindia.png" alt="Your Company">
+            <img class="hidden h-8 w-auto lg:block" src="/assets/images/ordindia.png" alt="Your Company">
+          </div>
           <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
             <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium" aria-current="page">Dashboard</a>
@@ -54,7 +61,6 @@ templ PatientDashboard(firstName string, profileEndpoint string) {
             -->
             <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="dropdown">
               <!-- Active: "bg-gray-100", Not Active: "" -->
-              <a href={ templ.SafeURL(profileEndpoint)}class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
               <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
               <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
             </div>
@@ -64,54 +70,46 @@ templ PatientDashboard(firstName string, profileEndpoint string) {
     </div>
 
     <!-- Mobile menu, show/hide based on menu state. -->
-    <div class="sm:hidden" id="mobile-menu">
-      <div class="space-y-1 pb-3 pt-2">
-        <!-- Current: "border-indigo-500 bg-indigo-50 text-indigo-700", Default: "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800" -->
-        <a href="#" class="border-indigo-500 bg-indigo-50 text-indigo-700 block border-l-4 py-2 pl-3 pr-4 text-base font-medium" aria-current="page">Dashboard</a>
-        <a href="#" class="border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Team</a>
-        <a href="#" class="border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Projects</a>
-        <a href="#" class="border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 block border-l-4 py-2 pl-3 pr-4 text-base font-medium">Calendar</a>
-      </div>
-      <div class="border-t border-gray-200 pb-3 pt-4">
-        <div class="flex items-center px-4">
-          <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" src="/assets/images/ORDI_Patient_Profile.jpeg" alt="">
-          </div>
-          <div class="ml-3">
-            <div class="text-base font-medium text-gray-800">Tom Cook</div>
-            <div class="text-sm font-medium text-gray-500">tom@example.com</div>
-          </div>
-          <button type="button" class="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-            <span class="sr-only">View notifications</span>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-            </svg>
-          </button>
-        </div>
-        <div class="mt-3 space-y-1">
-          <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Your Profile</a>
-          <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Settings</a>
-          <a href="#" class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800">Sign out</a>
-        </div>
-      </div>
-    </div>
   </nav>
-
-  <div class="bg-indigo-700 py-10">
-    <main>
-      <div class="bg-indigo-700 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <!-- Your content -->
-        <div class="bg-indigo-700">
-            <div class="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
-                <div class="mx-auto max-w-2xl text-center">
-                <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Hi { firstName }, Our team is currently in the process of assigning a doctor for you.</h2>
-                <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-indigo-200">In the meantime, we invite you to explore our website, browse through our informative blogs, or check out the latest clinical trials available relevant to you</p>
-                </div>
-            </div>
+  
+    <div class="max-w-4xl mx-auto bg-white shadow-lg overflow-hidden sm:rounded-lg mt-8">
+        <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Patient Information</h3>
+            <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details</p>
         </div>
-      </div>
-    </main>
-  </div>
+        <div class="border-gray-100">
+            <dl class="divide-y divide-gray-100">
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">First Name</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.FirstName } </dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">Last Name</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.LastName }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">Email address</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.Email }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">Gender</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.Gender }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">City</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.City }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">PostCode</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ patient.PostalCode }</dd>
+            </div>
+            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-900">ABHA ID</dt>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{ strconv.Itoa(patient.ABHAID) }</dd>
+            </div>
+            </dl>
+        </div>
+    </div>
 </div>
 <script src="assets/js/toggleDropDown.js"></script>
 }

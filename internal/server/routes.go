@@ -27,11 +27,12 @@ func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositorie
 	r.Get(utils.PatientLoginScreen, templ.Handler(web.LoginPage(utils.PatientLoginSubmit, utils.PatientForgotPasswordScreen, utils.PatientSignupSteps)).ServeHTTP)
 	r.Post(utils.PatientSignupSubmit, patientHandler.Signup)
 	r.Post(utils.PatientLoginSubmit, patientHandler.Login)
-	r.Get(utils.PatientDashboard, templ.Handler(web.PatientDashboardPage()).ServeHTTP)
+	r.Get(utils.PatientDashboard, patientHandler.Dashboard)
 	r.Get(utils.PatientAppointments, patientHandler.Appointment)
 	r.Get(utils.PatientForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.PatientForgotPasswordSubmit)).ServeHTTP)
 	r.Get(utils.PatientSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreatePatientSignupStepsMessage(), utils.PatientSignupForm)).ServeHTTP)
 	r.Get(utils.PatientSignupForm, templ.Handler(web.PatientSignupFormPage(utils.PatientSignupSubmit)).ServeHTTP)
+	r.Get(utils.PatientProfile, patientHandler.Profile)
 
 	patientVerificationHandler := verification.NewPatientVerificationHandler(verification.PatientVerificationConfig{
 		Repository: patientRepository,
@@ -57,11 +58,12 @@ func (s *Server) RegisterDoctorRoutes(r *chi.Mux, doctorRepository repositories.
 	r.Get(utils.DoctorLoginScreen, templ.Handler(web.LoginPage(utils.DoctorLoginSubmit, utils.DoctorForgotPasswordScreen, utils.DoctorSignupSteps)).ServeHTTP)
 	r.Post(utils.DoctorSignupSubmit, doctorHandler.Signup)
 	r.Post(utils.DoctorLoginSubmit, doctorHandler.Login)
-	r.Get(utils.DoctorDashboard, templ.Handler(web.PatientDashboardPage()).ServeHTTP)
+	r.Get(utils.DoctorDashboard, doctorHandler.Dashboard)
 	r.Get(utils.DoctorAppointments, doctorHandler.Appointment)
 	r.Get(utils.DoctorForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.DoctorForgotPasswordSubmit)).ServeHTTP)
 	r.Get(utils.DoctorSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreateDoctorSignupStepsMessage(), utils.DoctorSignupForm)).ServeHTTP)
 	r.Get(utils.DoctorSignupForm, templ.Handler(web.DoctorSignupFormPage(utils.DoctorSignupSubmit)).ServeHTTP)
+	r.Get(utils.DoctorProfile, doctorHandler.Profile)
 
 	doctorVerificationHandler := verification.NewDoctorVerificationHandler(verification.DoctorVerificationConfig{
 		Repository: doctorRepository,
