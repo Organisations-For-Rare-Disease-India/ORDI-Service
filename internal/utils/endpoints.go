@@ -28,7 +28,8 @@ const (
 	DoctorVerifyNew             = "/verify_doctor"
 	DoctorVerifyExisting        = "/verify_existing_doctor"
 	DoctorNewPassword           = "/doctor_create_new_password"
-
-	HomeLogin  = "/login"
-	HomeSignup = "/signup"
+	HomeLogin                   = "/login"
+	HomeSignup                  = "/signup"
+	GenerateCaptcha             = "/generate_captcha"
+	VerifyCaptcha               = "/verify_captcha"
 )

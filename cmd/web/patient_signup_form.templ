@@ -24,14 +24,13 @@ templ PatientSignupFormScreen(patientSignupHandleEndpoint string) {
   ```
 -->
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <img class="h-40 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt=""/>
+  <div class="sm:mx-auto sm:w-full sm:max-w-md mt-32">
     <h2 class="mt-8 ml-3 text-base font-semibold leading-7 text-gray-900 text-center">Registration</h2>
   </div>
 
   <div class="space-y-10 divide-y divide-gray-900/10">
     <div class="space-y-10 divide-y divide-gray-900/10">
-      <form action={ templ.SafeURL(patientSignupHandleEndpoint)} method="POST" onsubmit="return confirmPassword()">>
+      <form action={ templ.SafeURL(patientSignupHandleEndpoint)} method="POST" onsubmit="return confirmPassword()">
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-4 md:grid-cols-3">
           <div class="px-4 sm:px-0">
             <h2 class="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
@@ -341,9 +340,10 @@ templ PatientSignupFormScreen(patientSignupHandleEndpoint string) {
               </div>
             </div>
         </div>
-        <div class="col-span-full">
-            <div class="flex items-center">
-                <input id="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+            <div class="col-span-1"></div>
+            <div class="flex items-center col-span-2">
+                <input id="terms" type="checkbox" required class="ml-3 h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
                 <label for="terms" class="ml-2 block text-sm leading-6 text-gray-900">
                     I have read and agree to the <a href="/terms_and_conditions" class="text-indigo-600 hover:text-indigo-500" target="_blank">Terms and Conditions</a> <span class="text-red-600">*</span>
                 </label>

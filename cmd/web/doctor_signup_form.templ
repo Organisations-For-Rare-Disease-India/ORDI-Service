@@ -24,14 +24,15 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
   ```
 -->
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <img class="h-30 w-auto max-w-full max-h-full object-contain" src="/assets/images/ordindia.png" alt=""/>
+
+  <div class="sm:mx-auto sm:w-full sm:max-w-md mt-32">
+    <h2 class="mt-8 ml-3 text-base font-semibold leading-7 text-gray-900 text-center">Registration</h2>
   </div>
 
   <div class="space-y-10 divide-y divide-gray-900/10">
-    <div class="mt-8 space-y-10 divide-y divide-gray-900/10">
+    <div class="space-y-10 divide-y divide-gray-900/10">
       <form action={ templ.SafeURL(doctorSignupHandleEndpoint)} method="POST" onsubmit="return confirmPassword()">
-        <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-8 pt-4 md:grid-cols-3">
           <div class="px-4 sm:px-0">
             <h2 class="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
             <p class="mt-1 text-sm leading-6 text-gray-600">Please provide your personal and contact details. </p>
@@ -45,7 +46,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     First name <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input type="text" name="first_name" id="first_name" autocomplete="given-name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input type="text" name="first_name" id="first_name" autocomplete="given-name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                   </div>
                 </div>
 
@@ -54,7 +55,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     Last name <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input type="text" name="last_name" id="last_name" autocomplete="family-name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input type="text" name="last_name" id="last_name" autocomplete="family-name" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                   </div>
                 </div>
 
@@ -64,15 +65,15 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                   </label>
                   <div class="mt-2 flex space-x-4">
                     <div class="flex items-center">
-                      <input id="male" name="gender" type="radio" value="Male" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
+                      <input id="male" name="gender" type="radio" value="Male" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 p-1">
                       <label for="male" class="ml-2 block text-sm font-medium text-gray-900">Male</label>
                     </div>
                     <div class="flex items-center">
-                      <input id="female" name="gender" type="radio" value="Female" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
+                      <input id="female" name="gender" type="radio" value="Female" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 p-1">
                       <label for="female" class="ml-2 block text-sm font-medium text-gray-900">Female</label>
                     </div>
                     <div class="flex items-center">
-                      <input id="other" name="gender" type="radio" value="Other" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300">
+                      <input id="other" name="gender" type="radio" value="Other" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 p-1">
                       <label for="other" class="ml-2 block text-sm font-medium text-gray-900">Other</label>
                     </div>
                   </div>
@@ -83,7 +84,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     Email address <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input id="email_id" name="email_id" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input id="email_id" name="email_id" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                   </div>
                 </div>
 
@@ -92,7 +93,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     Password <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input id="password" name="password" type="password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Enter your password">
+                    <input id="password" name="password" type="password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1" placeholder="Enter your password">
                   </div>
                   <p class="mt-2 text-sm text-gray-500">Your password must be at least 8 characters long.</p>
                 </div>
@@ -102,7 +103,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     Re-enter Password <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input id="confirm_password" type="password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Enter your password again">
+                    <input id="confirm_password" type="password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1" placeholder="Enter your password again">
                   </div>
                 </div>
 
@@ -126,7 +127,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     Street address <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input type="text" name="street_address" id="street_address" required autocomplete="street-address" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input type="text" name="street_address" id="street_address" required autocomplete="street-address" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                   </div>
                 </div>
 
@@ -135,7 +136,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     City <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input type="text" name="city" id="city" required autocomplete="address-level2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input type="text" name="city" id="city" required autocomplete="address-level2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                   </div>
                 </div>
 
@@ -144,7 +145,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     State / Province <span class="text-red-600">*</span>
                   </label>
                   <div class="mt-2">
-                    <input type="text" name="region" id="region" required autocomplete="address-level1" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input type="text" name="region" id="region" required autocomplete="address-level1" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                   </div>
                 </div>
 
@@ -153,7 +154,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                   ZIP / Postal code <span class="text-red-600">*</span>
                 </label>
                 <div class="mt-2">
-                  <input type="text" name="postal_code" id="postal_code" required autocomplete="postal_code" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                  <input type="text" name="postal_code" id="postal_code" required autocomplete="postal_code" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                 </div>
               </div>
 
@@ -186,7 +187,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                         Street address <span class="text-red-600">*</span>
                     </label>
                     <div class="mt-2">
-                        <input type="text" name="street_address" id="street_address" required autocomplete="street-address" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <input type="text" name="street_address" id="street_address" required autocomplete="street-address" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                     </div>
                     </div>
 
@@ -195,7 +196,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                         City <span class="text-red-600">*</span>
                     </label>
                     <div class="mt-2">
-                        <input type="text" name="city" id="city" required autocomplete="address-level2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <input type="text" name="city" id="city" required autocomplete="address-level2" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                     </div>
                     </div>
 
@@ -204,7 +205,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                         State / Province <span class="text-red-600">*</span>
                     </label>
                     <div class="mt-2">
-                        <input type="text" name="region" id="region" required autocomplete="address-level1" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <input type="text" name="region" id="region" required autocomplete="address-level1" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                     </div>
                     </div>
                     
@@ -213,7 +214,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
                     ZIP / Postal code <span class="text-red-600">*</span>
                     </label>
                     <div class="mt-2">
-                    <input type="text" name="postal_code" id="postal_code" required autocomplete="postal_code" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <input type="text" name="postal_code" id="postal_code" required autocomplete="postal_code" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-1">
                     </div>
                     </div>
                 </div>
@@ -223,7 +224,7 @@ templ DoctorSignupFormScreen(doctorSignupHandleEndpoint string) {
 
         <div class="mt-8 space-y-10 divide-y divide-gray-900/10">
           <a href="/doctor_submit">
-            <button type="submit" class="inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <button type="submit" class="inline-flex items-center gap-x-2 rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 float-right">
               Submit Form
               <svg class="-mr-0.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />

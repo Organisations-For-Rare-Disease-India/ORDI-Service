@@ -158,7 +158,7 @@ func (d *doctorVerification) VerifyNewUser(w http.ResponseWriter, r *http.Reques
 			return
 		}
 
-		if doctor != nil {
+		if doctor == nil {
 			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			return
 		}

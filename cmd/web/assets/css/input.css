@@ -5,3 +5,35 @@
 .float-right {
     float: right;
 }
+
+.ordi-icon-justify {
+    top: 3%;
+    left: 5%;
+}
+
+.home-menu-justify {
+    top: 5%;
+    left: 30%;
+    right: 10%;
+}
+
+.max-w-4xl {
+    max-width: 60rem;
+}
+
+.signup-page-container {
+    margin-left: 15%;
+}
+
+.m-login {
+    margin-left: 30%;
+}
+
+.m-registration {
+    margin-left: 25%;
+}
+
+.m-login-selection {
+    margin-left: 10%;
+}
+
