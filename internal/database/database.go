@@ -27,4 +27,7 @@ type Database interface {
 
 	// AutoMigrate migrates database schema to match the struct definitions
 	AutoMigrate(ctx context.Context, entity interface{}) error
+
+	// FindAll finds all instances of type entity
+	FindAll(ctx context.Context, entity interface{}) error
 }

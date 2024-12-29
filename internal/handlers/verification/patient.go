@@ -142,9 +142,6 @@ func (p *patientVerification) VerifyNewUser(w http.ResponseWriter, r *http.Reque
 	if err != nil || email == "" {
 		http.Error(w, TokenRequiredMessage, http.StatusUnauthorized)
 	}
-	if err != nil {
-		http.Error(w, TokenRequiredMessage, http.StatusUnauthorized)
-	}
 	// User is verified
 
 	// Display the login page
@@ -184,5 +181,5 @@ func (p *patientVerification) VerifyExistingUser(w http.ResponseWriter, r *http.
 	// User is verified
 
 	// Display the Create new password page
-	templ.Handler(web.CreateNewPasswordPage()).ServeHTTP(w, r)
+	templ.Handler(web.CreateNewPasswordPage(utils.PatientNewPassword)).ServeHTTP(w, r)
 }

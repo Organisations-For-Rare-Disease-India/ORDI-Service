@@ -12,4 +12,6 @@ type Repository[T any] interface {
 	Delete(ctx context.Context, entity *T) error
 
 	FindByField(ctx context.Context, field string, value interface{}) (*T, error)
+
+	FindAll(ctx context.Context) ([]T, error)
 }

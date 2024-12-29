@@ -2,7 +2,9 @@ package server
 
 import (
 	"ORDI/cmd/web"
+	"ORDI/internal/handlers/admin"
 	"ORDI/internal/handlers/doctor"
+	"ORDI/internal/handlers/masteradmin"
 	"ORDI/internal/handlers/patient"
 	"ORDI/internal/handlers/verification"
 	"ORDI/internal/models"
@@ -11,13 +13,14 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositories.Repository[models.Patient]) {
+func (s *Server) RegisterPatientRoutes(r chi.Router, patientRepository repositories.Repository[models.Patient]) {
 	patientHandler := patient.NewPatientHandler(patient.PatientHandlerConfig{
 		PatientRepo: patientRepository,
 		Cache:       s.cache,
@@ -48,7 +51,7 @@ func (s *Server) RegisterPatientRoutes(r *chi.Mux, patientRepository repositorie
 
 }
 
-func (s *Server) RegisterDoctorRoutes(r *chi.Mux, doctorRepository repositories.Repository[models.Doctor]) {
+func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositories.Repository[models.Doctor]) {
 	doctorHandler := doctor.NewDoctorHandler(doctor.DoctorHandlerConfig{
 		DoctorRepo: doctorRepository,
 		Cache:      s.cache,
@@ -77,30 +80,98 @@ func (s *Server) RegisterDoctorRoutes(r *chi.Mux, doctorRepository repositories.
 
 }
 
+func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.Repository[models.Admin],
+	patientRepository repositories.Repository[models.Patient],
+	doctorRepository repositories.Repository[models.Doctor],
+) {
+	adminHandler := admin.NewAdminHandler(admin.AdminHandlerConfig{
+		AdminRepo:   adminRepository,
+		PatientRepo: patientRepository,
+		DoctorRepo:  doctorRepository,
+		Cache:       s.cache,
+		Email:       s.email,
+	})
+
+	r.Get(utils.AdminLoginScreen, templ.Handler(web.AdminLoginPage(utils.AdminLoginSubmit, false)).ServeHTTP)
+	r.Get(utils.MasterAdminLoginScreen, templ.Handler(web.AdminLoginPage(utils.MasterAdminLoginSubmit, true)).ServeHTTP)
+	r.Post(utils.AdminLoginSubmit, adminHandler.Login)
+	r.Get(utils.DoctorProfile, adminHandler.Profile)
+	r.Get(utils.AdminCreate, templ.Handler(web.AdminCreationFormPage(utils.AdminCreateSubmit)).ServeHTTP)
+	r.Get(utils.AdminLoginScreen, templ.Handler(web.AdminLoginPage(utils.AdminLoginSubmit, false)).ServeHTTP)
+	r.Get(utils.AdminSetCredentials, adminHandler.Setup)
+	r.Post(utils.AdminRegisterSubmit, adminHandler.Register)
+	r.Get(utils.AdminDashboard, adminHandler.Dashboard)
+	r.Get(utils.AdminViewDoctorList, adminHandler.ListDoctors)
+	r.Get(utils.AdminViewPatientList, adminHandler.ListPatients)
+	r.Get("/", templ.Handler(web.AdminHomePage(utils.AdminLoginScreen, utils.MasterAdminLoginScreen)).ServeHTTP)
+}
+
+func (s *Server) RegisterMasterAdminRoutes(r chi.Router, adminRepository repositories.Repository[models.Admin],
+	masterAdminRepository repositories.Repository[models.MasterAdmin],
+) {
+	masterAdminHandler := masteradmin.NewMasterAdminHandler(masteradmin.MasterAdminHandlerConfig{
+		AdminRepo:       adminRepository,
+		MasterAdminRepo: masterAdminRepository,
+		Cache:           s.cache,
+		Email:           s.email,
+	})
+
+	r.Get(utils.MasterAdminLoginScreen, templ.Handler(web.AdminLoginPage(utils.MasterAdminLoginSubmit, true)).ServeHTTP)
+	r.Post(utils.MasterAdminLoginSubmit, masterAdminHandler.Login)
+	r.Post(utils.AdminCreateSubmit, masterAdminHandler.Create)
+}
 func (s *Server) RegisterRoutes() http.Handler {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	mainRouter := chi.NewRouter()
 
-	r.Get("/", templ.Handler(web.HomePage()).ServeHTTP)
+	// Add all middleware first
+	mainRouter.Use(middleware.Logger)
 
-	r.Get("/health", s.healthHandler)
-
-	// Static file serving
-	fileServer := http.FileServer(http.FS(web.Files))
-	r.Handle("/assets/*", fileServer)
-
-	r.Get(utils.HomeLogin, templ.Handler(web.ChooseRolePage(utils.DoctorLoginScreen, utils.PatientLoginScreen)).ServeHTTP)
-	r.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
-
-	// Patient specific handlers
+	// Initialise all the repositories
+	adminRepository := repositories.NewAdminRepository(s.db)
+	masterAdminRepository := repositories.NewMasterAdminRepository(s.db)
 	patientRepository := repositories.NewPatientRepository(s.db)
-	s.RegisterPatientRoutes(r, patientRepository)
-
-	// Doctor specific handlers
 	doctorRepository := repositories.NewDoctorRepository(s.db)
-	s.RegisterDoctorRoutes(r, doctorRepository)
 
-	return r
+	mainRouter.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Skip domain check for assets and health endpoint
+			if strings.HasPrefix(r.URL.Path, "/assets/") || r.URL.Path == "/health" {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			domain := extractDomain(r.Host)
+			if domain == utils.InternalDomain {
+				// Create admin router
+				adminRouter := chi.NewRouter()
+				s.RegisterAdminRoutes(adminRouter, adminRepository, patientRepository, doctorRepository)
+				s.RegisterMasterAdminRoutes(adminRouter, adminRepository, masterAdminRepository)
+				adminRouter.ServeHTTP(w, r)
+				return
+			}
+
+			// Create public router
+			publicRouter := chi.NewRouter()
+			publicRouter.Get("/", templ.Handler(web.HomePage()).ServeHTTP)
+			publicRouter.Get(utils.HomeLogin, templ.Handler(web.ChooseRolePage(utils.DoctorLoginScreen, utils.PatientLoginScreen)).ServeHTTP)
+			publicRouter.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
+
+			// Patient specific handlers
+			s.RegisterPatientRoutes(publicRouter, patientRepository)
+
+			// Doctor specific handlers
+			s.RegisterDoctorRoutes(publicRouter, doctorRepository)
+
+			publicRouter.ServeHTTP(w, r)
+		})
+	})
+
+	// After all middleware, add the universal routes
+	fileServer := http.FileServer(http.FS(web.Files))
+	mainRouter.Handle("/assets/*", fileServer)
+	mainRouter.Get("/health", s.healthHandler)
+
+	return mainRouter
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
@@ -118,4 +189,11 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(s.db.Health())
 	_, _ = w.Write(jsonResp)
+}
+
+// extractDomain extracts the domain part from the full host (with or without port)
+func extractDomain(host string) string {
+	// Split the host by ':' to handle the case with port
+	hostParts := strings.Split(host, ":")
+	return hostParts[0] // Return only the domain part
 }

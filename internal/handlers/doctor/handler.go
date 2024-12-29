@@ -8,9 +8,12 @@ import (
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/schema"
 )
 
 const JWT_TOKEN_HEADER = "token"
+
+var decoder = schema.NewDecoder()
 
 type Doctor interface {
 	Signup(http.ResponseWriter, *http.Request)

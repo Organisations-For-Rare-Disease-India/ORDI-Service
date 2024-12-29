@@ -158,3 +158,11 @@ func (s *mysqlService) AutoMigrate(ctx context.Context, entity interface{}) erro
 	}
 	return nil
 }
+
+func (s *mysqlService) FindAll(ctx context.Context, entity interface{}) error {
+	// Fetch all records of the entity from the database
+	if err := s.db.WithContext(ctx).Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}

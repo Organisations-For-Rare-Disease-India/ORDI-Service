@@ -30,6 +30,22 @@ const (
 	DoctorNewPassword           = "/doctor_create_new_password"
 	HomeLogin                   = "/login"
 	HomeSignup                  = "/signup"
+	AdminLoginScreen            = "/admin_login"
+	AdminLoginSubmit            = "/admin_login_submit"
+	AdminDashboard              = "/admin_dashboard"
+	AdminProfile                = "/admin_profile"
+	AdminCreate                 = "/admin_create"
+	AdminCreateSubmit           = "/admin_create_submit"
+	AdminSetCredentials         = "/admin_set_credentials"
+	AdminRegisterSubmit         = "/admin_register_submit"
+	AdminViewDoctorList         = "/admin_view_doctor_list"
+	AdminViewPatientList        = "/admin_view_patient_list"
+	MasterAdminLoginScreen      = "/master_admin_login"
+	MasterAdminLoginSubmit      = "/master_admin_login_submit"
 	GenerateCaptcha             = "/generate_captcha"
 	VerifyCaptcha               = "/verify_captcha"
 )
+
+// Domain name
+const InternalDomain = "internal.ordindia.foundation"
+const PublicDomain = "ordindia.foundation"

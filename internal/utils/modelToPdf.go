@@ -50,3 +50,16 @@ func DoctorToPDF(doctor models.Doctor) (*bytes.Buffer, error) {
 
 	return builder.Output()
 }
+
+func AdminToPDF(admin models.Admin) (*bytes.Buffer, error) {
+
+	builder := NewPDFBuilder()
+	builder.AddTitle("Your Information").
+		AddField("Name", fmt.Sprintf("%s %s", admin.FirstName, admin.LastName)).
+		AddField("Email", admin.Email).
+		AddField("Address", fmt.Sprintf("%s, %s, %s, %s, %s",
+			admin.StreetAddress, admin.City, admin.Region, admin.Country, admin.PostalCode))
+
+	return builder.Output()
+
+}
