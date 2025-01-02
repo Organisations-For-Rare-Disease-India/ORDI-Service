@@ -2,6 +2,9 @@
 
 
 PROJECT_REL_DIR=.
+TOOLS_DIR = ./tools
+TOOLS_BIN = tools
+
 include ${PROJECT_REL_DIR}/common.config.mk
 
 # Build the application
@@ -46,6 +49,10 @@ test:
 clean:
 	@echo "Cleaning..."
 	@rm -f main
+
+# Run the tools binary
+create-master-admin:
+	@go run $(TOOLS_DIR)
 
 # Live Reload
 watch:

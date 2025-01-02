@@ -11,11 +11,8 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/gorilla/schema"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var decoder = schema.NewDecoder()
 
 func (d *doctorHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

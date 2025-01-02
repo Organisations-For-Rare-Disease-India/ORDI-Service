@@ -183,5 +183,5 @@ func (d *doctorVerification) VerifyExistingUser(w http.ResponseWriter, r *http.R
 	// User is verified
 
 	// Display the Create new password page
-	templ.Handler(web.CreateNewPasswordPage()).ServeHTTP(w, r)
+	templ.Handler(web.CreateNewPasswordPage(utils.DoctorNewPassword)).ServeHTTP(w, r)
 }

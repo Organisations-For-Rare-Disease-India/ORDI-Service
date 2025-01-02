@@ -1,4 +1,4 @@
-package doctor
+package admin
 
 import (
 	"ORDI/internal/handlers/token"
@@ -11,10 +11,9 @@ import (
 type LoginDetails struct {
 	Email    string `schema:"email_id"`
 	Password string `schema:"password"`
-	Captcha  string `schema:"captcha"`
 }
 
-func (d *doctorHandler) Login(w http.ResponseWriter, r *http.Request) {
+func (a *adminHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var credentials LoginDetails
@@ -33,20 +32,20 @@ func (d *doctorHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Find doctor from database
-	doctor, err := d.doctorRepository.FindByField(ctx, "email_id", credentials.Email)
+	// Find admin from database
+	admin, err := a.adminRepository.FindByField(ctx, "email_id", credentials.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if doctor == nil {
+	if admin == nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
 	// Compare the provided password with the stored hashed password
-	err = bcrypt.CompareHashAndPassword([]byte(doctor.Password), []byte(credentials.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(credentials.Password))
 	if err != nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
@@ -63,6 +62,6 @@ func (d *doctorHandler) Login(w http.ResponseWriter, r *http.Request) {
 	// Once a cookie is set on client, it is sent along with every request henceforth.
 	http.SetCookie(w, cookie)
 
-	// Take doctor to dashboard if credentials match
-	http.Redirect(w, r, utils.DoctorDashboard, http.StatusSeeOther)
+	// Take admin to dashboard if credentials match
+	http.Redirect(w, r, utils.AdminDashboard, http.StatusSeeOther)
 }
