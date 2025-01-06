@@ -25,7 +25,7 @@
     margin-left: 15%;
 }
 
-.m-login {
+.m-header {
     margin-left: 30%;
 }
 
@@ -37,3 +37,10 @@
     margin-left: 10%;
 }
 
+.max-h-half {
+    max-height: 50%;
+}
+  
+.max-w-half {
+    max-width: 50%;
+}

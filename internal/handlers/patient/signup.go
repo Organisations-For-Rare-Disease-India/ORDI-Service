@@ -67,7 +67,10 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	// Store patient on database
 	patient.Verified = false // Mark verified as false
-	s.patientRepository.Save(ctx, &patient)
+	err = s.patientRepository.Save(ctx, &patient)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 	// Prepare attachement to send to ORDI
 	pdfBuffer, err := utils.PatientToPDF(patient)
