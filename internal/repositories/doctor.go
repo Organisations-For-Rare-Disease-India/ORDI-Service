@@ -51,6 +51,17 @@ func (r *doctorRepository) FindByField(ctx context.Context, field string, value 
 	return &doctor, nil
 }
 
+func (r *doctorRepository) FindAllByField(ctx context.Context, field string, value interface{}) ([]models.Doctor, error) {
+	var doctor []models.Doctor
+	if err := r.db.FindByField(ctx, &doctor, field, value); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // No doctor found
+		}
+		return nil, err
+	}
+	return doctor, nil
+}
+
 func (r *doctorRepository) FindAll(ctx context.Context) ([]models.Doctor, error) {
 	var doctors []models.Doctor
 	if err := r.db.FindAll(ctx, &doctors); err != nil {

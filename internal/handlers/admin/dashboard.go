@@ -22,6 +22,12 @@ func (a *adminHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notificationCount, err := utils.GetNotificationCount(ctx, a.notificationRepository, claims.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// We can later use more admin information to define scopes
-	templ.Handler(web.AdminDashboardPage(admin.FirstName, utils.AdminProfile, utils.AdminViewDoctorList, utils.AdminViewPatientList)).ServeHTTP(w, r)
+	templ.Handler(web.AdminDashboardPage(admin.FirstName, utils.AdminProfile, utils.AdminViewDoctorList, utils.AdminViewPatientList, notificationCount)).ServeHTTP(w, r)
 }
