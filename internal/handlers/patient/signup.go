@@ -56,6 +56,13 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	htmlBody := utils.GenerateVerificationHTML(ctx, token, utils.PatientVerifyNew, "Thank you for Registering to ORDI!")
 	s.email.SendEmail(patient.Email, "ORDI Email Verification", htmlBody, nil, "", "text/html")
 
+	s.notificationRepository.Save(ctx, &models.Notification{
+		UserEmail: patient.Email,
+		Message:   "Thank you for Registering to ORDI!",
+		SentTime:  time.Now().Format("2006-01-02 15:04:05"),
+		IsRead:    false,
+	})
+
 	// Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(patient.Password), bcrypt.DefaultCost)
 	if err != nil {

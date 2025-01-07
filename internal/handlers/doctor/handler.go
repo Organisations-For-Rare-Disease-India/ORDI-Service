@@ -24,22 +24,25 @@ type Doctor interface {
 }
 
 type doctorHandler struct {
-	doctorRepository repositories.Repository[models.Doctor]
-	cache            cache.Cache
-	email            email.Email
+	doctorRepository       repositories.Repository[models.Doctor]
+	notificationRepository repositories.Repository[models.Notification]
+	cache                  cache.Cache
+	email                  email.Email
 }
 
 type DoctorHandlerConfig struct {
-	DoctorRepo repositories.Repository[models.Doctor]
-	Cache      cache.Cache
-	Email      email.Email
+	DoctorRepo             repositories.Repository[models.Doctor]
+	NotificationRepository repositories.Repository[models.Notification]
+	Cache                  cache.Cache
+	Email                  email.Email
 }
 
 func NewDoctorHandler(config DoctorHandlerConfig) Doctor {
 	return &doctorHandler{
-		doctorRepository: config.DoctorRepo,
-		cache:            config.Cache,
-		email:            config.Email,
+		doctorRepository:       config.DoctorRepo,
+		notificationRepository: config.NotificationRepository,
+		cache:                  config.Cache,
+		email:                  config.Email,
 	}
 }
 

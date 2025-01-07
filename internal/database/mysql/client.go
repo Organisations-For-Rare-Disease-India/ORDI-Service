@@ -152,6 +152,13 @@ func (s *mysqlService) FindByField(ctx context.Context, entity interface{}, fiel
 	return nil
 }
 
+func (s *mysqlService) FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error {
+	if err := s.db.WithContext(ctx).Where(field+" = ?", value).Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *mysqlService) AutoMigrate(ctx context.Context, entity interface{}) error {
 	if err := s.db.WithContext(ctx).AutoMigrate(entity); err != nil {
 		return err

@@ -25,6 +25,9 @@ type Database interface {
 	// FindByField retrieves the first record with field and provided value
 	FindByField(ctx context.Context, entity interface{}, field string, value interface{}) error
 
+	// FindAllByField retrieves all the records with field and provided value
+	FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error
+
 	// AutoMigrate migrates database schema to match the struct definitions
 	AutoMigrate(ctx context.Context, entity interface{}) error
 

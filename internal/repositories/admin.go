@@ -51,6 +51,17 @@ func (r *adminRepository) FindByField(ctx context.Context, field string, value i
 	return &admin, nil
 }
 
+func (r *adminRepository) FindAllByField(ctx context.Context, field string, value interface{}) ([]models.Admin, error) {
+	var admin []models.Admin
+	if err := r.db.FindAllByField(ctx, &admin, field, value); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // No admin found
+		}
+		return nil, err
+	}
+	return admin, nil
+}
+
 func (r *adminRepository) FindAll(ctx context.Context) ([]models.Admin, error) {
 	var admin []models.Admin
 	if err := r.db.FindAll(ctx, &admin); err != nil {

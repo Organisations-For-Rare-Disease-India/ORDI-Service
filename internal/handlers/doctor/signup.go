@@ -44,6 +44,12 @@ func (d *doctorHandler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	// Generate html body for verification mail
 	htmlBody := utils.GenerateVerificationHTML(ctx, token, utils.DoctorVerifyNew, "Thank you for Registering to ORDI!")
+	d.notificationRepository.Save(ctx, &models.Notification{
+		UserEmail: doctor.Email,
+		Message:   "Thank you for Registering to ORDI!",
+		SentTime:  time.Now().String(),
+		IsRead:    false,
+	})
 	err = d.email.SendEmail(doctor.Email, "ORDI Email Verification", htmlBody, nil, "", "text/html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -76,7 +82,7 @@ func (d *doctorHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	// Email details
 	subject := "New Doctor registration"
 	bodyType := "text/plain"
-	body := "A new patient has signed up. Please find the attached PDF with the details"
+	body := "A new doctor has signed up. Please find the attached PDF with the details"
 	to := "jhavedantamay@gmail.com"
 	attachementName := fmt.Sprintf("%s.pdf", doctor.FirstName)
 	err = d.email.SendEmail(to, subject, body, pdfBuffer, attachementName, bodyType)
