@@ -61,8 +61,10 @@ func (a *masterAdminHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	// Store admin on database
 	admin.Verified = false // Mark verified as false
-	a.adminRepository.Save(ctx, &admin)
-
+	err = a.adminRepository.Save(ctx, &admin)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 	// Render the submit page with a success message
 	// Render the template with the success flag
 	templ.Handler(web.SubmitPage(messages.SubmitMessage{
