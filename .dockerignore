@@ -1,0 +1,20 @@
+# Ignore OS/editor files
+.vscode/
+
+# Git files
+.git/
+
+# Node.js files (used for Tailwind)
+node_modules/
+npm-debug.log
+
+# Go files (temporary/build files)
+bin/
+
+
+.env.example
+*.env.local
+
+# Logs and temp files
+*.log
+tmp/
