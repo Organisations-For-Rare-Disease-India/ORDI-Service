@@ -22,6 +22,12 @@ func (p *patientHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	notificationCount, err := utils.GetNotificationCount(ctx, p.notificationRepository, claims.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	// TODO: Add logic here to show current status of patient
-	templ.Handler(web.PatientDashboardPage(patient.FirstName, utils.PatientProfile)).ServeHTTP(w, r)
+	templ.Handler(web.PatientDashboardPage(patient.FirstName, utils.PatientProfile, notificationCount)).ServeHTTP(w, r)
 }

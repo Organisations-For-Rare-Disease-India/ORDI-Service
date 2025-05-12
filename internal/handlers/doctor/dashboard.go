@@ -22,5 +22,11 @@ func (d *doctorHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templ.Handler(web.DoctorDashboardPage(doctor.FirstName, utils.DoctorProfile)).ServeHTTP(w, r)
+	notificationCount, err := utils.GetNotificationCount(ctx, d.notificationRepository, claims.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	templ.Handler(web.DoctorDashboardPage(doctor.FirstName, utils.DoctorProfile, notificationCount)).ServeHTTP(w, r)
 }

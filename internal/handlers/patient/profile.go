@@ -3,6 +3,7 @@ package patient
 import (
 	"ORDI/cmd/web"
 	"ORDI/internal/handlers/token"
+	"ORDI/internal/utils"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -20,6 +21,12 @@ func (p *patientHandler) Profile(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	templ.Handler(web.PatientProfilePage(patient)).ServeHTTP(w, r)
+
+	notificationCount, err := utils.GetNotificationCount(ctx, p.notificationRepository, claims.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	templ.Handler(web.PatientProfilePage(patient, notificationCount)).ServeHTTP(w, r)
 
 }

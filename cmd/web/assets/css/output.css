@@ -1930,6 +1930,16 @@ video {
   max-width: 50%;
 }
 
+.notification-counter {
+  position: absolute;
+  top: 1rem;
+  background-color: rgba(212, 19, 13, 1);
+  color: #fff;
+  border-radius: 3px;
+  padding: 1px 3px;
+  font: 8px Verdana;
+}
+
 .placeholder\:text-gray-400::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
