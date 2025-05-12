@@ -37,4 +37,4 @@ COPY --from=builder /app/.env .
 
 EXPOSE 8082
 
-CMD ["./main"]
+ENTRYPOINT ["./main"]
