@@ -5,7 +5,6 @@ import (
 	"ORDI/internal/email"
 	"ORDI/internal/models"
 	"ORDI/internal/repositories"
-	"log/slog"
 	"net/http"
 
 	"github.com/mojocn/base64Captcha"
@@ -28,7 +27,6 @@ type patientHandler struct {
 	email                 email.Email
 	captchaStore          base64Captcha.Store
 	captchaDriver         *base64Captcha.DriverDigit
-	log                   *slog.Logger
 }
 type PatientHandlerConfig struct {
 	PatientRepo     repositories.Repository[models.Patient]
