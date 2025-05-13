@@ -163,7 +163,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			publicRouter.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
 
 			// Patient specific handlers
-			s.RegisterPatientRoutes(publicRouter, patientRepository)
+			s.RegisterPatientRoutes(publicRouter, patientRepository, appointmentRepository)
 
 			// Doctor specific handlers
 			s.RegisterDoctorRoutes(publicRouter, doctorRepository)
