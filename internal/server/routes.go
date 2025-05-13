@@ -20,11 +20,14 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (s *Server) RegisterPatientRoutes(r chi.Router, patientRepository repositories.Repository[models.Patient]) {
+func (s *Server) RegisterPatientRoutes(
+	r chi.Router, patientRepository repositories.Repository[models.Patient],
+	appointmentRepo repositories.Repository[models.Appointment]) {
 	patientHandler := patient.NewPatientHandler(patient.PatientHandlerConfig{
-		PatientRepo: patientRepository,
-		Cache:       s.cache,
-		Email:       s.email,
+		PatientRepo:     patientRepository,
+		AppointmentRepo: appointmentRepo,
+		Cache:           s.cache,
+		Email:           s.email,
 	})
 
 	r.Get(utils.PatientLoginScreen, templ.Handler(web.LoginPage(utils.PatientLoginSubmit, utils.PatientForgotPasswordScreen, utils.PatientSignupSteps)).ServeHTTP)
@@ -83,13 +86,15 @@ func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositorie
 func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.Repository[models.Admin],
 	patientRepository repositories.Repository[models.Patient],
 	doctorRepository repositories.Repository[models.Doctor],
+	appointmentRepository repositories.Repository[models.Appointment],
 ) {
 	adminHandler := admin.NewAdminHandler(admin.AdminHandlerConfig{
-		AdminRepo:   adminRepository,
-		PatientRepo: patientRepository,
-		DoctorRepo:  doctorRepository,
-		Cache:       s.cache,
-		Email:       s.email,
+		AdminRepo:       adminRepository,
+		PatientRepo:     patientRepository,
+		DoctorRepo:      doctorRepository,
+		AppointmentRepo: appointmentRepository,
+		Cache:           s.cache,
+		Email:           s.email,
 	})
 
 	r.Get(utils.AdminLoginScreen, templ.Handler(web.AdminLoginPage(utils.AdminLoginSubmit, false)).ServeHTTP)
@@ -131,6 +136,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	masterAdminRepository := repositories.NewMasterAdminRepository(s.db)
 	patientRepository := repositories.NewPatientRepository(s.db)
 	doctorRepository := repositories.NewDoctorRepository(s.db)
+	appointmentRepository := repositories.NewAppointmentRepository(s.db)
 
 	mainRouter.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -144,7 +150,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			if domain == utils.InternalDomain {
 				// Create admin router
 				adminRouter := chi.NewRouter()
-				s.RegisterAdminRoutes(adminRouter, adminRepository, patientRepository, doctorRepository)
+				s.RegisterAdminRoutes(adminRouter, adminRepository, patientRepository, doctorRepository, appointmentRepository)
 				s.RegisterMasterAdminRoutes(adminRouter, adminRepository, masterAdminRepository)
 				adminRouter.ServeHTTP(w, r)
 				return

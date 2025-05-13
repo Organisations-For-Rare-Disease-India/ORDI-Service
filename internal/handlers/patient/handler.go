@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/email"
 	"ORDI/internal/models"
 	"ORDI/internal/repositories"
+	"log/slog"
 	"net/http"
 
 	"github.com/mojocn/base64Captcha"
@@ -21,18 +22,21 @@ type Patient interface {
 }
 
 type patientHandler struct {
-	patientRepository repositories.Repository[models.Patient]
-	cache             cache.Cache
-	email             email.Email
-	captchaStore      base64Captcha.Store
-	captchaDriver     *base64Captcha.DriverDigit
+	patientRepository     repositories.Repository[models.Patient]
+	appointmentRepository repositories.Repository[models.Appointment]
+	cache                 cache.Cache
+	email                 email.Email
+	captchaStore          base64Captcha.Store
+	captchaDriver         *base64Captcha.DriverDigit
+	log                   *slog.Logger
 }
 type PatientHandlerConfig struct {
-	PatientRepo   repositories.Repository[models.Patient]
-	Cache         cache.Cache
-	Email         email.Email
-	CaptchaStore  base64Captcha.Store
-	CaptchaDriver base64Captcha.DriverDigit
+	PatientRepo     repositories.Repository[models.Patient]
+	AppointmentRepo repositories.Repository[models.Appointment]
+	Cache           cache.Cache
+	Email           email.Email
+	CaptchaStore    base64Captcha.Store
+	CaptchaDriver   base64Captcha.DriverDigit
 }
 
 func NewPatientHandler(config PatientHandlerConfig) Patient {
