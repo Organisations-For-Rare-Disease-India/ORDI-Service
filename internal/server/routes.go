@@ -108,6 +108,7 @@ func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.
 	r.Get(utils.AdminDashboard, adminHandler.Dashboard)
 	r.Get(utils.AdminViewDoctorList, adminHandler.ListDoctors)
 	r.Get(utils.AdminViewPatientList, adminHandler.ListPatients)
+	r.Post(utils.AdminAppointments, adminHandler.Dashboard)
 	r.Get("/", templ.Handler(web.AdminHomePage(utils.AdminLoginScreen, utils.MasterAdminLoginScreen)).ServeHTTP)
 }
 

@@ -27,6 +27,7 @@ type Admin interface {
 	Setup(http.ResponseWriter, *http.Request)
 	ListDoctors(http.ResponseWriter, *http.Request)
 	ListPatients(http.ResponseWriter, *http.Request)
+	Appointments(http.ResponseWriter, *http.Request)
 }
 
 type adminHandler struct {
