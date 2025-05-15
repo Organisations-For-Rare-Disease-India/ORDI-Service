@@ -14,8 +14,14 @@ type appointmentRepository struct {
 }
 
 func NewAppointmentRepository(db database.Database) *appointmentRepository {
-	if err := db.AutoMigrate(context.Background(), &models.Appointment{}); err != nil {
+	if err := db.AutoMigrate(context.Background(),
+		&models.Appointment{}); err != nil {
 		panic("failed to migrate appointment database: " + err.Error())
+	}
+	if err := db.AutoMigrate(context.Background(),
+		&models.RecommendedTest{}); err != nil {
+		panic("failed to migrate test recommended database: " + err.Error())
+
 	}
 	return &appointmentRepository{db: db}
 }
