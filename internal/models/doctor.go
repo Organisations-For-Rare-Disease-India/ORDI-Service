@@ -5,7 +5,8 @@ import "gorm.io/gorm"
 type Doctor struct {
 	DoctorPersonalInfo `schema:",inline" gorm:"embedded"`
 	DoctorHospitalInfo `schema:",inline" gorm:"embedded"`
-	Verified           bool `gorm:"column:verified"` // Add this line
+	Verified           bool          `gorm:"column:verified"` // Add this line
+	Appointments       []Appointment `gorm:"foreignKey:DoctorID"`
 }
 
 type DoctorPersonalInfo struct {

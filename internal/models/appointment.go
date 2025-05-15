@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type Appointment struct {
 	gorm.Model
-	PatientID           int64             `schema:"patiend_id" gorm:"column:patient_id"`
-	DoctorID            int64             `schema:"doctor_id" gorm:"column:doctor_id"`
+	PatientID           uint              `schema:"patiend_id" gorm:"column:patient_id;type bigint unsigned"`
+	DoctorID            uint              `schema:"doctor_id" gorm:"column:doctor_id;type bigint unsigned"`
 	Notes               string            `schema:"notes" gorm:"column:notes"`
 	Remarks             string            `schema:"remarks" gorm:"column:remarks"`
 	PreAppointmentNotes string            `schema:"pre_appointment_notes" gorm:"column:pre_appointment_notes"`
