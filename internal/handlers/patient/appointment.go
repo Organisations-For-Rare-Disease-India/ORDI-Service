@@ -8,6 +8,6 @@ import (
 )
 
 func (s *patientHandler) Appointment(w http.ResponseWriter, r *http.Request) {
-	// TODO: Admin should be able to add appointments to Patient and Doctor's calendar
+	// display only calender
 	templ.Handler(web.CalendarPage()).ServeHTTP(w, r)
 }
