@@ -33,6 +33,7 @@ type adminHandler struct {
 	adminRepository   repositories.Repository[models.Admin]
 	patientRepository repositories.Repository[models.Patient]
 	doctorRepository  repositories.Repository[models.Doctor]
+	notificationRepository repositories.Repository[models.Notification]
 	email             email.Email
 }
 
@@ -40,6 +41,7 @@ type AdminHandlerConfig struct {
 	AdminRepo   repositories.Repository[models.Admin]
 	PatientRepo repositories.Repository[models.Patient]
 	DoctorRepo  repositories.Repository[models.Doctor]
+	NotificationRepo repositories.Repository[models.Notification]
 	Cache       cache.Cache
 	Email       email.Email
 }
@@ -49,6 +51,7 @@ func NewAdminHandler(config AdminHandlerConfig) Admin {
 		adminRepository:   config.AdminRepo,
 		patientRepository: config.PatientRepo,
 		doctorRepository:  config.DoctorRepo,
+		notificationRepository: config.NotificationRepo,
 		email:             config.Email,
 	}
 }

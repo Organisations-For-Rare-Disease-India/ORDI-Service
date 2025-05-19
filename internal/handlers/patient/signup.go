@@ -22,11 +22,6 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	var patient models.Patient
 
 	// Render the submit page with a success message
-	// Render the template with the success flag
-	go templ.Handler(web.SubmitPage(messages.SubmitMessage{
-		Title:   "Successfully uploaded",
-		Message: "A verification email has been sent to your email address. Please check your inbox to verify your account.",
-	})).ServeHTTP(w, r)
 
 	// Parse the form data
 	err := r.ParseForm()
@@ -70,6 +65,7 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	err = s.patientRepository.Save(ctx, &patient)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return;
 	}
 
 	// Prepare attachement to send to ORDI
@@ -90,4 +86,20 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	s.notificationRepository.Save(ctx, &models.Notification{
+		UserID:    patient.ID,
+		UserType:  models.Role.String(models.PatientType),
+		Title:     "Welcome",
+		UserEmail: patient.Email,
+		Message:   "Thank you for registration to ORDI!",
+		IsRead:    false,
+		SentTime:  time.Now(),
+	})
+
+	// Render the template with the success flag
+	 templ.Handler(web.SubmitPage(messages.SubmitMessage{
+		Title:   "Successfully uploaded",
+		Message: "A verification email has been sent to your email address. Please check your inbox to verify your account.",
+	})).ServeHTTP(w, r)
 }

@@ -25,12 +25,14 @@ type Doctor interface {
 
 type doctorHandler struct {
 	doctorRepository repositories.Repository[models.Doctor]
+	notificationRepository repositories.Repository[models.Notification]
 	cache            cache.Cache
 	email            email.Email
 }
 
 type DoctorHandlerConfig struct {
 	DoctorRepo repositories.Repository[models.Doctor]
+	NotficationRepo repositories.Repository[models.Notification]
 	Cache      cache.Cache
 	Email      email.Email
 }
@@ -38,6 +40,7 @@ type DoctorHandlerConfig struct {
 func NewDoctorHandler(config DoctorHandlerConfig) Doctor {
 	return &doctorHandler{
 		doctorRepository: config.DoctorRepo,
+		notificationRepository: config.NotficationRepo,
 		cache:            config.Cache,
 		email:            config.Email,
 	}

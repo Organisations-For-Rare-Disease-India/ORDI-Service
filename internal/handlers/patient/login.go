@@ -56,7 +56,7 @@ func (p *patientHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie, err := token.CreateTokenCookie(credentials.Email)
+	cookie, err := token.CreateTokenCookie(patient.ID,credentials.Email)
 	if err != nil {
 		// If there is an error in creating the JWT return an internal server error
 		w.WriteHeader(http.StatusInternalServerError)
