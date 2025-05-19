@@ -2,6 +2,7 @@ package admin
 
 import (
 	"ORDI/cmd/web"
+	"ORDI/internal/utils"
 	"net/http"
 	"time"
 
@@ -9,8 +10,7 @@ import (
 )
 
 func (a *adminHandler) Appointments(w http.ResponseWriter, r *http.Request) {
-	// TODO: make this edit using username/patientname
-	templ.Handler(web.CalendarPage()).ServeHTTP(w, r)
+	templ.Handler(web.AdminAppointmentsPage(utils.AdminAppointments)).ServeHTTP(w, r)
 }
 
 func getMonthYear(now time.Time) (int, time.Month, int) {

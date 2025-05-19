@@ -64,3 +64,11 @@ func (a *appointmentRepository) FindAll(ctx context.Context) ([]models.Appointme
 	}
 	return app, nil
 }
+
+func (a *appointmentRepository) FindAllWithPage(ctx context.Context) ([]models.Appointment, error) {
+	var appointments []models.Appointment
+	if err := a.db.FindAllWithPage(ctx, database.Paginate{}, &appointments); err != nil {
+		return nil, err
+	}
+	return appointments, nil
+}

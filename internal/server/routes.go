@@ -149,7 +149,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 			}
 
 			domain := extractDomain(r.Host)
-			if domain == utils.InternalDomain {
+			// if domain == utils.InternalDomain {
+			if domain == "localhost" {
 				// Create admin router
 				adminRouter := chi.NewRouter()
 				s.RegisterAdminRoutes(adminRouter, adminRepository, patientRepository, doctorRepository, appointmentRepository)
