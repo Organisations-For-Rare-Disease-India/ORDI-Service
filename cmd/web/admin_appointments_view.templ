@@ -1,0 +1,17 @@
+package web
+
+templ AdminAppointmentsPage(adminAppointmentEndpoint string){
+	@Base(){
+		<div id="admin-appointment-container">
+		@AdminAppointmentScreen(adminAppointmentEndpoint)
+		</div>
+	}
+}
+
+templ AdminAppointmentScreen(adminAppointmentEndpoint string) {
+	<div class="bg-white">
+	  <div class="m-header sm:w-full sm:max-w-md mt-10">
+    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">ORDI Admin Portal</h2>
+		</div>
+	</div>
+}

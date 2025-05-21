@@ -61,3 +61,7 @@ func (r *adminRepository) FindAll(ctx context.Context) ([]models.Admin, error) {
 	}
 	return admin, nil
 }
+
+func (r *adminRepository) FindAllWithPage(ctx context.Context) ([]models.Admin, error) {
+	return []models.Admin{}, nil
+}

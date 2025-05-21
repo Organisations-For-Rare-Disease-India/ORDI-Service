@@ -14,4 +14,6 @@ type Repository[T any] interface {
 	FindByField(ctx context.Context, field string, value interface{}) (*T, error)
 
 	FindAll(ctx context.Context) ([]T, error)
+
+	FindAllWithPage(ctx context.Context) ([]T, error)
 }

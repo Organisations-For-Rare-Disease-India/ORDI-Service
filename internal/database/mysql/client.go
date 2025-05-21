@@ -166,3 +166,18 @@ func (s *mysqlService) FindAll(ctx context.Context, entity interface{}) error {
 	}
 	return nil
 }
+
+func (s *mysqlService) FindAllWithPage(ctx context.Context, page database.Paginate, entity any) error {
+	var totalRows int64
+	s.db.Model(entity).Count(&totalRows)
+	page.Total = totalRows
+	if page.Page == 0 {
+		page.Page = 1
+	}
+	if page.Limit == 0 {
+		page.Limit = 10
+	}
+	page.Offset = (page.Page - 1) * page.Limit
+	s.db.Offset(page.Offset).Limit(page.Limit)
+	return nil
+}
