@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/handlers/admin"
 	"ORDI/internal/handlers/doctor"
 	"ORDI/internal/handlers/masteradmin"
+	"ORDI/internal/handlers/notification"
 	"ORDI/internal/handlers/patient"
 	"ORDI/internal/handlers/verification"
 	"ORDI/internal/models"
@@ -20,9 +21,10 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (s *Server) RegisterPatientRoutes(r chi.Router, patientRepository repositories.Repository[models.Patient]) {
+func (s *Server) RegisterPatientRoutes(r chi.Router, patientRepository repositories.Repository[models.Patient], notificationRespository repositories.Repository[models.Notification] ) {
 	patientHandler := patient.NewPatientHandler(patient.PatientHandlerConfig{
 		PatientRepo: patientRepository,
+		NotificationRepo: notificationRespository,
 		Cache:       s.cache,
 		Email:       s.email,
 	})
@@ -51,9 +53,18 @@ func (s *Server) RegisterPatientRoutes(r chi.Router, patientRepository repositor
 
 }
 
-func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositories.Repository[models.Doctor]) {
+func (s *Server) RegisterCommonRoutes(r chi.Router , notificationRepository repositories.Repository[models.Notification]) {
+	config := notification.NotificationHandlerConfig{
+		NotificationRepository: notificationRepository,
+	}
+	notificationHandler := notification.NewNotificationHandler(config)
+	r.Get(utils.Notifications , notificationHandler.ShowNotifications)
+}
+
+func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositories.Repository[models.Doctor], notificationRepository repositories.Repository[models.Notification]) {
 	doctorHandler := doctor.NewDoctorHandler(doctor.DoctorHandlerConfig{
 		DoctorRepo: doctorRepository,
+		NotficationRepo: notificationRepository,
 		Cache:      s.cache,
 		Email:      s.email,
 	})
@@ -82,12 +93,13 @@ func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositorie
 
 func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.Repository[models.Admin],
 	patientRepository repositories.Repository[models.Patient],
-	doctorRepository repositories.Repository[models.Doctor],
+	doctorRepository repositories.Repository[models.Doctor],notificationRepository repositories.Repository[models.Notification],
 ) {
 	adminHandler := admin.NewAdminHandler(admin.AdminHandlerConfig{
 		AdminRepo:   adminRepository,
 		PatientRepo: patientRepository,
 		DoctorRepo:  doctorRepository,
+		NotificationRepo: notificationRepository,
 		Cache:       s.cache,
 		Email:       s.email,
 	})
@@ -131,6 +143,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	masterAdminRepository := repositories.NewMasterAdminRepository(s.db)
 	patientRepository := repositories.NewPatientRepository(s.db)
 	doctorRepository := repositories.NewDoctorRepository(s.db)
+	notificationRepository := repositories.NewNotificationRepository(s.db)
 
 	mainRouter.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -144,7 +157,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			if domain == utils.InternalDomain {
 				// Create admin router
 				adminRouter := chi.NewRouter()
-				s.RegisterAdminRoutes(adminRouter, adminRepository, patientRepository, doctorRepository)
+				s.RegisterAdminRoutes(adminRouter, adminRepository, patientRepository, doctorRepository , notificationRepository)
 				s.RegisterMasterAdminRoutes(adminRouter, adminRepository, masterAdminRepository)
 				adminRouter.ServeHTTP(w, r)
 				return
@@ -157,10 +170,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 			publicRouter.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
 
 			// Patient specific handlers
-			s.RegisterPatientRoutes(publicRouter, patientRepository)
+			s.RegisterPatientRoutes(publicRouter , patientRepository , notificationRepository)
 
 			// Doctor specific handlers
-			s.RegisterDoctorRoutes(publicRouter, doctorRepository)
+			s.RegisterDoctorRoutes(publicRouter, doctorRepository , notificationRepository)
+
+			// Public Routes handlers
+			s.RegisterCommonRoutes(publicRouter,notificationRepository)
 
 			publicRouter.ServeHTTP(w, r)
 		})

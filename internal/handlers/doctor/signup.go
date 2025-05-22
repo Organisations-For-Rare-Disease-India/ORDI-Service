@@ -85,6 +85,18 @@ func (d *doctorHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
+	// Sending notification to the doctor about registration
+	d.notificationRepository.Save(ctx,&models.Notification{
+		UserID: doctor.ID,
+		UserType: models.Role.String(models.DoctorType),
+		Title: "Welcome",
+		UserEmail: doctor.Email,
+		Message:"Thank you for Registering to ORDI!" ,
+		IsRead: false,
+		SentTime: time.Now(),
+	})
+
 	// Render the submit page with a success message
 	// Render the template with the success flag
 	templ.Handler(web.SubmitPage(messages.SubmitMessage{
