@@ -4,6 +4,7 @@ import (
 	"ORDI/cmd/web"
 	"ORDI/internal/models"
 	"ORDI/internal/utils"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -11,7 +12,22 @@ import (
 )
 
 func (a *adminHandler) Appointments(w http.ResponseWriter, r *http.Request) {
-	templ.Handler(web.AdminAppointmentsPage(utils.AdminAppointments, models.AppointmentData{})).ServeHTTP(w, r)
+	appointments, err := a.appointmentRepository.FindAllWithPage(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	appointmentsData := make([]models.AppointmentData, len(appointments))
+	for i, v := range appointments {
+		appointmentsData[i] = models.AppointmentData{
+			AppointmentID:   int(v.ID),
+			PatientName:     fmt.Sprintf("%d", v.PatientID),
+			DoctorName:      fmt.Sprintf("%d", v.DoctorID),
+			AppointmentDate: v.ApppointmentDate.Format(time.RFC3339),
+		}
+
+	}
+	templ.Handler(web.AdminAppointmentsPage(utils.AdminAppointments, appointmentsData)).ServeHTTP(w, r)
 }
 
 func getMonthYear(now time.Time) (int, time.Month, int) {

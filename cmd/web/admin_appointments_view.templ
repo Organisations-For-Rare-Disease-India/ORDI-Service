@@ -1,9 +1,8 @@
 package web
 
 import "ORDI/internal/models"
-import "time"
 
-templ AdminAppointmentsPage(appointmentEndpoint string,appointments models.AppointmentData){
+templ AdminAppointmentsPage(appointmentEndpoint string,appointments []models.AppointmentData){
 	@Base(){
 		<div id="admin-appointment-container">
 		@AdminAppointmentScreen(appointmentEndpoint,appointments)
@@ -11,26 +10,26 @@ templ AdminAppointmentsPage(appointmentEndpoint string,appointments models.Appoi
 	}
 }
 
-templ AdminAppointmentScreen(apppointmentEndpoint string,appointments models.AppointmentData) {
+templ AdminAppointmentScreen(apppointmentEndpoint string,appointments []models.AppointmentData) {
     <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">ORDI Admin Portal</h2>
-		<table class="table delete-row-example">
+for _,appointment := range appointments{
+		<table class="appointment">
   <thead>
     <tr>
 		<th>AppointmentID</th>
       <th>PatientName</th>
       <th>DoctorName</th>
-			<th>AppointTime</th>
+			<th>AppointDateTime</th>
 			<th>Action</th>
       <th></th>
     </tr>
   </thead>
   <tbody hx-target="closest tr" hx-swap="outerHTML">
 		<tr>
-
-      <td>${appointments.AppointmentID}</td>
-      <td>${appointments.PatientName}</td>
-      <td>${appointments.DoctorName}</td>
-      <td>${appointments.ApppointmentDate.Format(time.RFC3339)}</td>
+	      <td>${appointment.AppointmentID}</td>
+      <td>${appointment.PatientName}</td>
+      <td>${appointment.DoctorName}</td>
+      <td>${appointment.AppointmentDate}</td>
       <td>
         <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 hx-get="/admin_view_appointments/appointments.AppointmentID"
@@ -69,4 +68,5 @@ templ AdminAppointmentScreen(apppointmentEndpoint string,appointments models.App
   </tbody>
 </table>
 
+}
 }
