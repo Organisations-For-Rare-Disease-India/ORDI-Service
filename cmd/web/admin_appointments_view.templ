@@ -1,17 +1,73 @@
 package web
 
-templ AdminAppointmentsPage(adminAppointmentEndpoint string){
+import "ORDI/internal/models"
+import "time"
+
+templ AdminAppointmentsPage(appointmentEndpoint string,appointments models.AppointmentData){
 	@Base(){
 		<div id="admin-appointment-container">
-		@AdminAppointmentScreen(adminAppointmentEndpoint)
+		@AdminAppointmentScreen(appointmentEndpoint,appointments)
 		</div>
 	}
 }
 
-templ AdminAppointmentScreen(adminAppointmentEndpoint string) {
+templ AdminAppointmentScreen(apppointmentEndpoint string,appointments models.AppointmentData) {
 	<div class="bg-white">
 	  <div class="m-header sm:w-full sm:max-w-md mt-10">
     <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">ORDI Admin Portal</h2>
+					<div class="mx-auto flex max-w-3xs items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+							<table class="table-auto">
+							<thead>
+							    <tr>
+							    <th>Patient name</th>
+							     <th>Doctor name</th>
+							     <th>Date</th>
+							    </tr>
+							</thead>
+					  <tbody class="table-auto" hx-target="closest tr" hx-swap="outerHTML">
+					    <tr>
+					      <td>${appointments.PatientName}</td>
+					      <td>${appointments.DoctorName}</td>
+					      <td>${appointments.ApppointmentDate.Format(time.RFC3339)}</td>
+								<td></td>
+								<td>
+						        <button class="bg-red-700 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+						                hx-get="/appointment/${appointments.id}/edit"
+						                hx-trigger="edit"
+						                onClick="let editing = document.querySelector('.editing')
+						                         if(editing) {
+						                           Swal.fire({title: 'Already Editing',
+						                                      showCancelButton: true,
+						                                      confirmButtonText: 'Yep, Edit This Row!',
+						                                      text:'Hey!  You are already editing a row!  Do you want to cancel that edit and continue?'})
+						                           .then((result) => {
+						                                if(result.isConfirmed) {
+						                                   htmx.trigger(editing, 'cancel')
+						                                   htmx.trigger(this, 'edit')
+						                                }
+						                            })
+						                         } else {
+						                            htmx.trigger(this, 'edit')
+						                         }">
+						          Edit
+						        </button>
+							</td>
+									<tr hx-trigger='cancel' class='editing' hx-get="/appointments/${appointments.id}">
+									  <td><input autofocus name='patient name' value='${appointments.PatientName}'></td>
+									  <td><input name='doctor name' value='${appointments.DoctorName}'></td>
+									  <td>
+										    <button class="bg-indigo-700 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded" hx-get="/appointments/${appointments.id}">
+										      Cancel
+										    </button>
+										    <button class="bg-indigo-700 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded" hx-put="/appointments/${appointments.id}" hx-include="closest tr">
+										      Save
+										    </button>
+									  </td>
+								</tr>
+					    </tr>
+					  </tbody>
+					</table>
+			</div>
 		</div>
 	</div>
 }

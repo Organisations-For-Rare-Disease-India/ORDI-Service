@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Appointment struct {
 	gorm.Model
@@ -10,6 +14,7 @@ type Appointment struct {
 	Remarks             string            `schema:"remarks" gorm:"column:remarks"`
 	PreAppointmentNotes string            `schema:"pre_appointment_notes" gorm:"column:pre_appointment_notes"`
 	RecommendedTests    []RecommendedTest `gorm:"foreignKey:AppointmentID"`
+	ApppointmentDate    time.Time         `schema:"appointment_date" gorm:"column:appointment_date"`
 }
 
 type RecommendedTest struct {
@@ -18,4 +23,10 @@ type RecommendedTest struct {
 	Name          string `schema:"name" gorm:"column:name"`
 	Description   string `schema:"description" gorm:"column:description"`
 	Status        string `schema:"status" grom:"column:status"`
+}
+
+type AppointmentData struct {
+	PatientName string
+	DoctorName  string
+	Appointment
 }
