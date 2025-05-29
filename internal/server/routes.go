@@ -11,6 +11,7 @@ import (
 	"ORDI/internal/repositories"
 	"ORDI/internal/utils"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -109,6 +110,7 @@ func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.
 	r.Get(utils.AdminViewDoctorList, adminHandler.ListDoctors)
 	r.Get(utils.AdminViewPatientList, adminHandler.ListPatients)
 	r.Get(utils.AdminAppointments, adminHandler.Appointments)
+	r.Get(fmt.Sprintf("%s/{id}", utils.AdminAppointmentByID), adminHandler.GetAppointmentID())
 	r.Post(utils.AdminAppointments, adminHandler.Appointments)
 	r.Get("/", templ.Handler(web.AdminHomePage(utils.AdminLoginScreen, utils.MasterAdminLoginScreen)).ServeHTTP)
 }

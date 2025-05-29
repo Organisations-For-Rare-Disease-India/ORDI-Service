@@ -1,6 +1,9 @@
 package web
 
 import "ORDI/internal/models"
+import "fmt"
+	
+
 
 templ AdminAppointmentsPage(appointmentEndpoint string,appointments []models.AppointmentData){
 	@Base(){
@@ -12,8 +15,7 @@ templ AdminAppointmentsPage(appointmentEndpoint string,appointments []models.App
 
 templ AdminAppointmentScreen(apppointmentEndpoint string,appointments []models.AppointmentData) {
     <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">ORDI Admin Portal</h2>
-for _,appointment := range appointments{
-		<table class="appointment">
+<table class="appointment">
   <thead>
     <tr>
 		<th>AppointmentID</th>
@@ -24,15 +26,20 @@ for _,appointment := range appointments{
       <th></th>
     </tr>
   </thead>
+for _,appointment := range appointments{
   <tbody hx-target="closest tr" hx-swap="outerHTML">
-		<tr>
-	      <td>${appointment.AppointmentID}</td>
-      <td>${appointment.PatientName}</td>
-      <td>${appointment.DoctorName}</td>
-      <td>${appointment.AppointmentDate}</td>
-      <td>
-        <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                hx-get="/admin_view_appointments/appointments.AppointmentID"
+		<tr id={fmt.Sprintf("%d",appointment.AppointmentID)}>
+      <td id={fmt.Sprintf("%d",appointment.AppointmentID)}>{appointment.AppointmentID}</td>
+      <td>{appointment.PatientName}</td>
+      <td>{appointment.DoctorName}</td>
+      <td>{appointment.AppointmentDate}</td>
+      <td id={fmt.Sprintf("%d",appointment.AppointmentID)}>
+        <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3
+				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
+				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
+				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				id={fmt.Sprintf("%d",appointment.AppointmentID)}
+                hx-get={fmt.Sprintf("%s/%d","/admin_view_appointment",appointment.AppointmentID)}
                 hx-trigger="edit"
                 onClick="let editing = document.querySelector('.editing')
                          if(editing) {
@@ -53,10 +60,10 @@ for _,appointment := range appointments{
         </button>
       </td>
 			</tr>
-	// 		<tr hx-trigger='cancel' class='editing' hx-get="/admin_view_appointments">
+	// 		<tr hx-trigger='cancel' class='editing' hx-get="/admin_view_appointment?id=appointment.ID">
  //  <td><input name='patientName' value='${appointments.PatientName}'></td>
  //  <td><input name='doctorName' value='${appointments.DoctorName}'></td>
-	// <td><input name='appointmentDate' value='${appointments.AppointmentDate.Format(time.RFC3339)}'></td>
+	// <td><input name='appointmentDate' value='${appointments.AppointmentDate}'></td>
  //  <td>
  //    <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" hx-get="/admin_view_appointments">
  //      Cancel
@@ -66,7 +73,7 @@ for _,appointment := range appointments{
  //    </button>
  //  </td>
   </tbody>
-</table>
 
 }
+</table>
 }

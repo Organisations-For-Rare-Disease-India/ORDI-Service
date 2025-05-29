@@ -31,7 +31,7 @@ func (a *appointmentRepository) Save(ctx context.Context, appointment *models.Ap
 }
 
 func (a *appointmentRepository) FindByID(ctx context.Context, id uint) (*models.Appointment, error) {
-	var ap *models.Appointment
+	ap := &models.Appointment{}
 	if err := a.db.FindByID(ctx, id, ap); err != nil {
 		return nil, err
 	}

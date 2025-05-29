@@ -124,7 +124,8 @@ func (s *mysqlService) Close() error {
 	return sqlDB.Close()
 }
 
-func (s *mysqlService) FindByID(ctx context.Context, id uint, entity interface{}) error {
+func (s *mysqlService) FindByID(
+	ctx context.Context, id uint, entity any) error {
 	if err := s.db.WithContext(ctx).First(entity, id).Error; err != nil {
 		return err
 	}
@@ -178,6 +179,6 @@ func (s *mysqlService) FindAllWithPage(ctx context.Context, page database.Pagina
 		page.Limit = 10
 	}
 	page.Offset = (page.Page - 1) * page.Limit
-	s.db.Offset(page.Offset).Limit(page.Limit)
+	s.db.Offset(page.Offset).Limit(page.Limit).Find(entity)
 	return nil
 }
