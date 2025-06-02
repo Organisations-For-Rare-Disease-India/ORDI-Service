@@ -13,9 +13,11 @@ templ AdminAppointmentsPage(appointmentEndpoint string,appointments []models.App
 	}
 }
 
-templ AdminAppointmentScreen(apppointmentEndpoint string,appointments []models.AppointmentData) {
+templ AdminAppointmentScreen(
+apppointmentEndpoint string,appointments []models.AppointmentData) {
     <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">ORDI Admin Portal</h2>
-<table class="appointment">
+    <div id="appointsTable">
+<table class="appointment" id="appointments">
   <thead>
     <tr>
 		<th>AppointmentID</th>
@@ -26,54 +28,35 @@ templ AdminAppointmentScreen(apppointmentEndpoint string,appointments []models.A
       <th></th>
     </tr>
   </thead>
-for _,appointment := range appointments{
   <tbody hx-target="closest tr" hx-swap="outerHTML">
+for _,appointment := range appointments{
 		<tr id={fmt.Sprintf("%d",appointment.AppointmentID)}>
-      <td id={fmt.Sprintf("%d",appointment.AppointmentID)}>{appointment.AppointmentID}</td>
+      <td>{appointment.AppointmentID}</td>
       <td>{appointment.PatientName}</td>
       <td>{appointment.DoctorName}</td>
       <td>{appointment.AppointmentDate}</td>
-      <td id={fmt.Sprintf("%d",appointment.AppointmentID)}>
+      <td>
         <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3
 				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
 				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
 				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-				id={fmt.Sprintf("%d",appointment.AppointmentID)}
                 hx-get={fmt.Sprintf("%s/%d","/admin_view_appointment",appointment.AppointmentID)}
                 hx-trigger="edit"
-                onClick="let editing = document.querySelector('.editing')
-                         if(editing) {
-                           Swal.fire({title: 'Already Editing',
-                                      showCancelButton: true,
-                                      confirmButtonText: 'Yep, Edit This Row!',
-                                      text:'Hey!  You are already editing a row!  Do you want to cancel that edit and continue?'})
-                           .then((result) => {
-                                if(result.isConfirmed) {
-                                   htmx.trigger(editing, 'cancel')
-                                   htmx.trigger(this, 'edit')
-                                }
-                            })
-                         } else {
+                hx-target="closest tr"
+          onClick="let editing = document.querySelector('.editing')
+                   if(editing) {
+                             htmx.trigger(editing, 'cancel')
+                             htmx.trigger(this, 'edit')
+                          }else {
                             htmx.trigger(this, 'edit')
-                         }">
-          Edit
-        </button>
-      </td>
-			</tr>
-	// 		<tr hx-trigger='cancel' class='editing' hx-get="/admin_view_appointment?id=appointment.ID">
- //  <td><input name='patientName' value='${appointments.PatientName}'></td>
- //  <td><input name='doctorName' value='${appointments.DoctorName}'></td>
-	// <td><input name='appointmentDate' value='${appointments.AppointmentDate}'></td>
- //  <td>
- //    <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" hx-get="/admin_view_appointments">
- //      Cancel
- //    </button>
- //    <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" hx-put="/admin_view_appointments" hx-include="closest tr">
- //      Save
- //    </button>
- //  </td>
-  </tbody>
-
+                   }"
+               >
+       Edit
+     </button>
+     </td>
+        </tr>
 }
+  </tbody>
 </table>
+</div>
 }

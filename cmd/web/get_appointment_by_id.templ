@@ -1,0 +1,36 @@
+package web
+
+import "ORDI/internal/models"
+import "fmt"
+
+
+templ GetAppointmentByID(appointment *models.AppointmentData){
+  <tr hx-trigger='cancel' class='editing' id={fmt.Sprintf("%d",appointment.AppointmentID)}>
+    <td><input autofocus name='appointmentID'
+  value={appointment.AppointmentID}></td>
+  <td><input autofocus name='patientName' value={appointment.PatientName}></td>
+  <td><input autofocus name='doctorName' value={appointment.DoctorName}></td>
+  <td><input autofocus name='appointmentDate' value={appointment.AppointmentDate}></td><td>
+    <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3
+				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
+				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
+				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      hx-get="/admin_view_appointments">
+      Cancel
+    </button>
+    <button class="
+flex w-full justify-center rounded-md bg-indigo-600 px-3
+				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
+				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
+				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      hx-put={fmt.Sprintf("%s/%d","/admin_view_appointment",
+      appointment.AppointmentID)} hx-include="closest tr">
+      Save
+    </button>
+  </td>
+</tr>
+}
+
+templ AppointmentByIDScreen(appointment *models.AppointmentData){
+  @GetAppointmentByID(appointment)
+}

@@ -4,7 +4,6 @@ import (
 	"ORDI/cmd/web"
 	"ORDI/internal/models"
 	"ORDI/internal/utils"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -51,10 +50,14 @@ func (a *adminHandler) GetAppointmentID() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if err := json.NewEncoder(w).Encode(appointment); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		a := &models.AppointmentData{
+			AppointmentID:   int(appointment.ID),
+			PatientName:     fmt.Sprintf("%d", appointment.PatientID),
+			DoctorName:      fmt.Sprintf("%d", appointment.DoctorID),
+			AppointmentDate: appointment.ApppointmentDate.Format(time.RFC3339),
 		}
+
+		templ.Handler(web.GetAppointmentByID(a)).ServeHTTP(w, r)
 
 	})
 }
