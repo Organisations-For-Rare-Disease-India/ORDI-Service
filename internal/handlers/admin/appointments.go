@@ -20,16 +20,88 @@ func (a *adminHandler) Appointments(w http.ResponseWriter, r *http.Request) {
 	}
 	appointmentsData := make([]models.AppointmentData, len(appointments))
 	for i, v := range appointments {
+		// get patient
+		patientFromStore, err := a.patientRepository.FindByID(r.Context(), v.PatientID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// get doctor
+		docFromStore, err := a.doctorRepository.FindByID(r.Context(), v.DoctorID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		appointmentsData[i] = models.AppointmentData{
-			AppointmentID: int(v.ID),
+			AppointmentID: fmt.Sprintf("%d", v.ID),
 			// TODO: get name from patient and doctor table
-			PatientName:     fmt.Sprintf("%d", v.PatientID),
-			DoctorName:      fmt.Sprintf("%d", v.DoctorID),
+			PatientName:     fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
+			DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
 			AppointmentDate: v.ApppointmentDate.Format(time.RFC3339),
 		}
 
 	}
 	templ.Handler(web.AdminAppointmentsPage(utils.AdminAppointments, appointmentsData)).ServeHTTP(w, r)
+}
+
+func (a *adminHandler) PostAppointment(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, fmt.Errorf("method:%s not allowed", r.Method).Error(), http.StatusBadRequest)
+		return
+	}
+	// get data from req
+	if err := r.ParseForm(); err != nil {
+		http.Error(w,
+			fmt.Errorf("error reading form data:%v", err).Error(),
+			http.StatusBadRequest)
+		return
+	}
+	formValues := r.Form
+	aid := formValues.Get("appointmentID")
+	at := formValues.Get("appointmentDate")
+	appointmentID, err := strconv.Atoi(aid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	appointmentFromStore, err := a.appointmentRepository.FindByID(r.Context(), uint(appointmentID))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	updatedTime, err := time.Parse(time.RFC3339, at)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	appointmentFromStore.ApppointmentDate = updatedTime
+	appointmentFromStore.UpdatedAt = time.Now()
+	if err := a.appointmentRepository.Save(r.Context(),
+		appointmentFromStore); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// get patient
+	patientFromStore, err := a.patientRepository.FindByID(r.Context(),
+		appointmentFromStore.PatientID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// get doctor
+	docFromStore, err := a.doctorRepository.FindByID(r.Context(),
+		appointmentFromStore.DoctorID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	appointmentData := models.AppointmentData{
+		AppointmentID:   fmt.Sprintf("%d", appointmentID),
+		AppointmentDate: updatedTime.Format(time.RFC3339),
+		PatientName:     fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
+		DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
+	}
+	templ.Handler(web.GetAppointmentByID(appointmentData)).ServeHTTP(w, r)
 }
 
 func (a *adminHandler) GetAppointmentID() http.HandlerFunc {
@@ -50,14 +122,59 @@ func (a *adminHandler) GetAppointmentID() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		// get patient
+		patientFromStore, err := a.patientRepository.FindByID(r.Context(),
+			appointment.PatientID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// get doctor
+		docFromStore, err := a.doctorRepository.FindByID(r.Context(),
+			appointment.DoctorID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		a := &models.AppointmentData{
-			AppointmentID:   int(appointment.ID),
+			AppointmentID: fmt.Sprintf("%d", appointment.ID),
+			PatientName:   fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
+			DoctorName: fmt.Sprintf("%s,%s",
+				docFromStore.FirstName, docFromStore.LastName),
+			AppointmentDate: appointment.ApppointmentDate.Format(time.RFC3339),
+		}
+
+		templ.Handler(web.GetAppointmentByID(*a)).ServeHTTP(w, r)
+
+	})
+}
+
+func (a *adminHandler) GetAppointmentIDView() http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		if id == "" {
+			http.Error(w, fmt.Errorf("empty value received for id").Error(),
+				http.StatusBadRequest)
+			return
+		}
+		appointmentID, err := strconv.Atoi(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		appointment, err := a.appointmentRepository.FindByID(r.Context(), uint(appointmentID))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		a := &models.AppointmentData{
+			AppointmentID:   fmt.Sprintf("%d", appointment.ID),
 			PatientName:     fmt.Sprintf("%d", appointment.PatientID),
 			DoctorName:      fmt.Sprintf("%d", appointment.DoctorID),
 			AppointmentDate: appointment.ApppointmentDate.Format(time.RFC3339),
 		}
 
-		templ.Handler(web.GetAppointmentByID(a)).ServeHTTP(w, r)
+		templ.Handler(web.GetAppointmentView(a)).ServeHTTP(w, r)
 
 	})
 }

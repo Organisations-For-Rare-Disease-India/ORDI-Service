@@ -29,6 +29,8 @@ type Admin interface {
 	ListPatients(http.ResponseWriter, *http.Request)
 	Appointments(http.ResponseWriter, *http.Request)
 	GetAppointmentID() http.HandlerFunc
+	PostAppointment(http.ResponseWriter, *http.Request)
+	GetAppointmentIDView() http.HandlerFunc
 }
 
 type adminHandler struct {

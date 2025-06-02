@@ -30,7 +30,7 @@ apppointmentEndpoint string,appointments []models.AppointmentData) {
   </thead>
   <tbody hx-target="closest tr" hx-swap="outerHTML">
 for _,appointment := range appointments{
-		<tr id={fmt.Sprintf("%d",appointment.AppointmentID)}>
+		<tr id={appointment.AppointmentID}>
       <td>{appointment.AppointmentID}</td>
       <td>{appointment.PatientName}</td>
       <td>{appointment.DoctorName}</td>
@@ -40,9 +40,8 @@ for _,appointment := range appointments{
 				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
 				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
 				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                hx-get={fmt.Sprintf("%s/%d","/admin_view_appointment",appointment.AppointmentID)}
+                hx-get={fmt.Sprintf("%s/%s/edit","/admin_view_appointment",appointment.AppointmentID)}
                 hx-trigger="edit"
-                hx-target="closest tr"
           onClick="let editing = document.querySelector('.editing')
                    if(editing) {
                              htmx.trigger(editing, 'cancel')

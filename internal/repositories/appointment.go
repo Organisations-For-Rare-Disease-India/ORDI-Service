@@ -72,3 +72,9 @@ func (a *appointmentRepository) FindAllWithPage(ctx context.Context) ([]models.A
 	}
 	return appointments, nil
 }
+
+func (a *appointmentRepository) Update(
+	ctx context.Context, app *models.Appointment) error {
+	return nil
+
+}

@@ -26,8 +26,8 @@ type RecommendedTest struct {
 }
 
 type AppointmentData struct {
-	AppointmentID   int
-	PatientName     string
-	DoctorName      string
-	AppointmentDate string
+	AppointmentID   string `json:"appointmentID"`
+	PatientName     string `json:"patientName"`
+	DoctorName      string `json:"doctorName"`
+	AppointmentDate string `json:"appointmentDate"`
 }
