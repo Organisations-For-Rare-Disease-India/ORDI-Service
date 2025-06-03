@@ -101,7 +101,7 @@ func (a *adminHandler) PostAppointment(w http.ResponseWriter, r *http.Request) {
 		PatientName:     fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
 		DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
 	}
-	templ.Handler(web.GetAppointmentByID(appointmentData)).ServeHTTP(w, r)
+	templ.Handler(web.GetAppointmentView(&appointmentData)).ServeHTTP(w, r)
 }
 
 func (a *adminHandler) GetAppointmentID() http.HandlerFunc {
