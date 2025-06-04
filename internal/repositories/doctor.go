@@ -62,6 +62,19 @@ func (r *doctorRepository) FindAll(ctx context.Context) ([]models.Doctor, error)
 	return doctors, nil
 }
 
+func (r *doctorRepository) FindAllByField(ctx context.Context, field string, value interface{}) ([]models.Doctor, error) {
+	var doctors []models.Doctor
+
+	if err := r.db.FindAllByField(ctx, &doctors, field, value); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+			// No Doctors Found
+		}
+		return nil, err
+	}
+	return doctors, nil
+}
+
 func (r *doctorRepository) FindAllWithPage(ctx context.Context) ([]models.Doctor, error) {
 	return []models.Doctor{}, nil
 }

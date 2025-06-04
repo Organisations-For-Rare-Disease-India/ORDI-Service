@@ -12,7 +12,8 @@ const JWT_TOKEN_HEADER = "token"
 var jwtKey = []byte("my_secret_key")
 
 type Claims struct {
-	Email string `json:"email"`
+	UserId uint   `json:"user_id"`
+	Email  string `json:"email"`
 	jwt.RegisteredClaims
 }
 

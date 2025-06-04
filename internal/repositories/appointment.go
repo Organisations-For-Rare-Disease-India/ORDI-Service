@@ -73,8 +73,13 @@ func (a *appointmentRepository) FindAllWithPage(ctx context.Context) ([]models.A
 	return appointments, nil
 }
 
-func (a *appointmentRepository) Update(
-	ctx context.Context, app *models.Appointment) error {
-	return nil
-
+func (a *appointmentRepository) FindAllByField(ctx context.Context, field string, value interface{}) ([]models.Appointment, error) {
+	var appointments []models.Appointment
+	if err := a.db.FindAllByField(ctx, &appointments, field, value); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // No Admin Found
+		}
+		return nil, err
+	}
+	return appointments, nil
 }

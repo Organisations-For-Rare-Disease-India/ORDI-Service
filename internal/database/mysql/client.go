@@ -182,3 +182,11 @@ func (s *mysqlService) FindAllWithPage(ctx context.Context, page database.Pagina
 	s.db.Offset(page.Offset).Limit(page.Limit).Find(entity)
 	return nil
 }
+
+func (s *mysqlService) FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error {
+	// FindAllByField retrieves all the records with field and provided value
+	if err := s.db.WithContext(ctx).Where(field+" = ?", value).Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}

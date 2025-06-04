@@ -46,6 +46,7 @@ const (
 	MasterAdminLoginSubmit      = "/master_admin_login_submit"
 	GenerateCaptcha             = "/generate_captcha"
 	VerifyCaptcha               = "/verify_captcha"
+	Notifications               = "/notifications"
 )
 
 // Domain name

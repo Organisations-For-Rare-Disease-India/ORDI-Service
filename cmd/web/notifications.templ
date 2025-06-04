@@ -1,0 +1,38 @@
+package web
+
+import "ORDI/internal/models"
+
+templ NotificationsPage(notifications []models.ViewNotification) {
+    @Base() {
+        <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                @NotificationsListScreen(notifications)
+            </div>
+        </div>
+    }
+}
+
+templ NotificationsListScreen(notifications []models.ViewNotification) {
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 text-center">🔔 Notifications</h2>
+        </div>
+        <ul class="divide-y divide-gray-200">
+            for _, notification := range notifications {
+                <li class="flex flex-col sm:flex-row justify-between gap-4 px-6 py-4 hover:bg-gray-50 transition-all duration-150">
+                    <div class="text-sm text-gray-600 w-full sm:w-1/3 text-left sm:text-center">
+                        { notification.SentTime }
+                    </div>
+                    <div class="text-sm text-gray-800 w-full sm:w-2/3 text-left break-words">
+                        <p>{ notification.Message }</p>
+                    </div>
+                </li>
+            }
+            if len(notifications) == 0 {
+                <li class="px-6 py-8 text-center text-gray-400 text-sm">
+                    No notifications yet. 🎉
+                </li>
+            }
+        </ul>
+    </div>
+}
