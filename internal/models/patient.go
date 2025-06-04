@@ -6,7 +6,8 @@ type Patient struct {
 	PatientPersonalInfo `schema:",inline" gorm:"embedded"`
 	PatientDoctorInfo   `schema:",inline" gorm:"embedded"`
 	PatientSiblingInfo  `schema:",inline" gorm:"embedded"`
-	Verified            bool `gorm:"column:verified"` // Add this line
+	Verified            bool          `gorm:"column:verified"` // Add this line
+	Appointments        []Appointment `gorm:"foreignKey:PatientID"`
 }
 
 type PatientPersonalInfo struct {

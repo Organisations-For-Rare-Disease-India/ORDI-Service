@@ -74,3 +74,7 @@ func (r *doctorRepository) FindAllByField(ctx context.Context, field string, val
 	}
 	return doctors, nil
 }
+
+func (r *doctorRepository) FindAllWithPage(ctx context.Context) ([]models.Doctor, error) {
+	return []models.Doctor{}, nil
+}

@@ -65,7 +65,7 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	err = s.patientRepository.Save(ctx, &patient)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return;
+		return
 	}
 
 	// Prepare attachement to send to ORDI
@@ -98,7 +98,7 @@ func (s *patientHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Render the template with the success flag
-	 templ.Handler(web.SubmitPage(messages.SubmitMessage{
+	templ.Handler(web.SubmitPage(messages.SubmitMessage{
 		Title:   "Successfully uploaded",
 		Message: "A verification email has been sent to your email address. Please check your inbox to verify your account.",
 	})).ServeHTTP(w, r)

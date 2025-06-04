@@ -40,7 +40,7 @@ func (r *adminRepository) Delete(ctx context.Context, admin *models.Admin) error
 	return r.db.Delete(ctx, admin)
 }
 
-func (r *adminRepository) FindByField(ctx context.Context, field string, value interface{}) (*models.Admin, error) {
+func (r *adminRepository) FindByField(ctx context.Context, field string, value any) (*models.Admin, error) {
 	var admin models.Admin
 	if err := r.db.FindByField(ctx, &admin, field, value); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -71,4 +71,8 @@ func (r *adminRepository) FindAllByField(ctx context.Context, field string, valu
 		return nil, err
 	}
 	return admins, nil
+}
+
+func (r *adminRepository) FindAllWithPage(ctx context.Context) ([]models.Admin, error) {
+	return []models.Admin{}, nil
 }

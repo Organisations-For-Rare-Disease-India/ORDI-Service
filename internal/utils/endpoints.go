@@ -40,11 +40,13 @@ const (
 	AdminRegisterSubmit         = "/admin_register_submit"
 	AdminViewDoctorList         = "/admin_view_doctor_list"
 	AdminViewPatientList        = "/admin_view_patient_list"
+	AdminAppointments           = "/admin_view_appointments"
+	AdminAppointmentByID        = "/admin_view_appointment"
 	MasterAdminLoginScreen      = "/master_admin_login"
 	MasterAdminLoginSubmit      = "/master_admin_login_submit"
 	GenerateCaptcha             = "/generate_captcha"
 	VerifyCaptcha               = "/verify_captcha"
-	Notifications = "/notifications"
+	Notifications               = "/notifications"
 )
 
 // Domain name

@@ -21,29 +21,31 @@ type Patient interface {
 }
 
 type patientHandler struct {
-	patientRepository repositories.Repository[models.Patient]
+	patientRepository      repositories.Repository[models.Patient]
+	appointmentRepository  repositories.Repository[models.Appointment]
 	notificationRepository repositories.Repository[models.Notification]
-	cache             cache.Cache
-	email             email.Email
-	captchaStore      base64Captcha.Store
-	captchaDriver     *base64Captcha.DriverDigit
+	cache                  cache.Cache
+	email                  email.Email
+	captchaStore           base64Captcha.Store
+	captchaDriver          *base64Captcha.DriverDigit
 }
 type PatientHandlerConfig struct {
-	PatientRepo   repositories.Repository[models.Patient]
+	PatientRepo      repositories.Repository[models.Patient]
 	NotificationRepo repositories.Repository[models.Notification]
-	Cache         cache.Cache
-	Email         email.Email
-	CaptchaStore  base64Captcha.Store
-	CaptchaDriver base64Captcha.DriverDigit
+	AppointmentRepo  repositories.Repository[models.Appointment]
+	Cache            cache.Cache
+	Email            email.Email
+	CaptchaStore     base64Captcha.Store
+	CaptchaDriver    base64Captcha.DriverDigit
 }
 
 func NewPatientHandler(config PatientHandlerConfig) Patient {
 	return &patientHandler{
-		patientRepository: config.PatientRepo,
+		patientRepository:      config.PatientRepo,
 		notificationRepository: config.NotificationRepo,
-		cache:             config.Cache,
-		email:             config.Email,
-		captchaStore:      base64Captcha.DefaultMemStore,
-		captchaDriver:     base64Captcha.NewDriverDigit(50, 120, 4, 0.7, 80),
+		cache:                  config.Cache,
+		email:                  config.Email,
+		captchaStore:           base64Captcha.DefaultMemStore,
+		captchaDriver:          base64Captcha.NewDriverDigit(50, 120, 4, 0.7, 80),
 	}
 }

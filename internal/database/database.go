@@ -1,6 +1,8 @@
 package database
 
-import "context"
+import (
+	"context"
+)
 
 // Database represents a service that interacts with a database.
 type Database interface {
@@ -26,11 +28,21 @@ type Database interface {
 	FindByField(ctx context.Context, entity interface{}, field string, value interface{}) error
 
 	// FindAllByField retrieves all the records with field and provided value
-	FindAllByField(ctx context.Context , entity interface{} , field string , value interface{}) error
+	FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error
 
 	// AutoMigrate migrates database schema to match the struct definitions
 	AutoMigrate(ctx context.Context, entity interface{}) error
 
 	// FindAll finds all instances of type entity
 	FindAll(ctx context.Context, entity interface{}) error
+
+	FindAllWithPage(ctx context.Context, paginate Paginate, entity any) error
+}
+
+type Paginate struct {
+	Offset     int   `json:"offset,omitempty"`
+	Page       int   `json:"page,omitempty"`
+	Limit      int   `json:"limit,omitempty"`
+	Total      int64 `json:"total,omitempty"`
+	TotalPages int64 `json:"total_pages,omitempty"`
 }
