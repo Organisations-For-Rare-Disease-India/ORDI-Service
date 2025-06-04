@@ -26,18 +26,11 @@ func (a *adminHandler) Appointments(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// get doctor
-		docFromStore, err := a.doctorRepository.FindByID(r.Context(), v.DoctorID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 		appointmentsData[i] = models.AppointmentData{
-			AppointmentID: fmt.Sprintf("%d", v.ID),
-			// TODO: get name from patient and doctor table
+			AppointmentID:   fmt.Sprintf("%d", v.ID),
 			PatientName:     fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
-			DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
-			AppointmentDate: v.ApppointmentDate.Format(time.RFC3339),
+			DoctorName:      patientFromStore.DoctorName,
+			AppointmentDate: v.ApppointmentDate.Format(time.DateTime),
 		}
 
 	}
@@ -69,7 +62,7 @@ func (a *adminHandler) PostAppointment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	updatedTime, err := time.Parse(time.RFC3339, at)
+	updatedTime, err := time.Parse(time.DateTime, at)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -88,18 +81,11 @@ func (a *adminHandler) PostAppointment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// get doctor
-	docFromStore, err := a.doctorRepository.FindByID(r.Context(),
-		appointmentFromStore.DoctorID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	appointmentData := models.AppointmentData{
 		AppointmentID:   fmt.Sprintf("%d", appointmentID),
-		AppointmentDate: updatedTime.Format(time.RFC3339),
+		AppointmentDate: updatedTime.Format(time.DateTime),
 		PatientName:     fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
-		DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
+		DoctorName:      patientFromStore.DoctorName,
 	}
 	templ.Handler(web.GetAppointmentView(&appointmentData)).ServeHTTP(w, r)
 }
@@ -129,19 +115,11 @@ func (a *adminHandler) GetAppointmentID() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// get doctor
-		docFromStore, err := a.doctorRepository.FindByID(r.Context(),
-			appointment.DoctorID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 		a := &models.AppointmentData{
-			AppointmentID: fmt.Sprintf("%d", appointment.ID),
-			PatientName:   fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
-			DoctorName: fmt.Sprintf("%s,%s",
-				docFromStore.FirstName, docFromStore.LastName),
-			AppointmentDate: appointment.ApppointmentDate.Format(time.RFC3339),
+			AppointmentID:   fmt.Sprintf("%d", appointment.ID),
+			PatientName:     fmt.Sprintf("%s,%s", patientFromStore.FirstName, patientFromStore.LastName),
+			DoctorName:      patientFromStore.DoctorName,
+			AppointmentDate: appointment.ApppointmentDate.Format(time.DateTime),
 		}
 
 		templ.Handler(web.GetAppointmentByID(*a)).ServeHTTP(w, r)
@@ -174,19 +152,12 @@ func (a *adminHandler) GetAppointmentIDView() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// get doctor
-		docFromStore, err := a.doctorRepository.FindByID(r.Context(),
-			appointment.DoctorID)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 		a := &models.AppointmentData{
 			AppointmentID: fmt.Sprintf("%d", appointment.ID),
 			PatientName: fmt.Sprintf("%s,%s", patientFromStore.FirstName,
 				patientFromStore.LastName),
-			DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
-			AppointmentDate: appointment.ApppointmentDate.Format(time.RFC3339),
+			DoctorName:      patientFromStore.DoctorName,
+			AppointmentDate: appointment.ApppointmentDate.Format(time.DateTime),
 		}
 
 		templ.Handler(web.GetAppointmentView(a)).ServeHTTP(w, r)
