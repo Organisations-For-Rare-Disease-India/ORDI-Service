@@ -167,10 +167,25 @@ func (a *adminHandler) GetAppointmentIDView() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		// get patient
+		patientFromStore, err := a.patientRepository.FindByID(r.Context(),
+			appointment.PatientID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// get doctor
+		docFromStore, err := a.doctorRepository.FindByID(r.Context(),
+			appointment.DoctorID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		a := &models.AppointmentData{
-			AppointmentID:   fmt.Sprintf("%d", appointment.ID),
-			PatientName:     fmt.Sprintf("%d", appointment.PatientID),
-			DoctorName:      fmt.Sprintf("%d", appointment.DoctorID),
+			AppointmentID: fmt.Sprintf("%d", appointment.ID),
+			PatientName: fmt.Sprintf("%s,%s", patientFromStore.FirstName,
+				patientFromStore.LastName),
+			DoctorName:      fmt.Sprintf("%s,%s", docFromStore.FirstName, docFromStore.LastName),
 			AppointmentDate: appointment.ApppointmentDate.Format(time.RFC3339),
 		}
 

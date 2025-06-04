@@ -6,24 +6,24 @@ import "fmt"
 
 templ GetAppointmentByID(appointment models.AppointmentData){
   <tr hx-trigger='edit' class='editing' id={appointment.AppointmentID}>
-  <td><input autofocus name='appointmentID'
-  value={appointment.AppointmentID}></td>
-  <td><input  name='patientName' value={appointment.PatientName}></td>
-  <td><input  name='doctorName' value={appointment.DoctorName}></td>
-  <td><input  name='appointmentDate' value={appointment.AppointmentDate}></td><td>
-    <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3
-				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
-				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
-				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+      <div> <input autofocus name='appointmentID'
+  value={appointment.AppointmentID}></div></td>
+  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+  <div><input  name='patientName' value={appointment.PatientName}>
+  </div></td>
+  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+  <div><input  name='doctorName' value={appointment.DoctorName}></div></td>
+  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+  <div><input  name='appointmentDate' value={appointment.AppointmentDate}>
+  </div></td>
+  <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+    <button type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         hx-get={fmt.Sprintf("%s/%s","/admin_view_appointment",appointment.AppointmentID)}
       >
       Cancel
     </button>
-    <button class="
-flex w-full justify-center rounded-md bg-indigo-600 px-3
-				py-1.5 text-sm font-semibold leading-6 text-white shadow-sm
-				hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2
-				focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+    <button type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       hx-post="/admin_view_appointments"
       hx-include="closest tr"
       >
