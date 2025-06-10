@@ -40,6 +40,7 @@ func (s *Server) RegisterPatientRoutes(
 	r.Post(utils.PatientLoginSubmit, patientHandler.Login)
 	r.Get(utils.PatientDashboard, patientHandler.Dashboard)
 	r.Get(utils.PatientAppointments, patientHandler.Appointment)
+	r.Get(utils.GetPatientAppointments, patientHandler.GetAppointments)
 	r.Get(utils.PatientForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.PatientForgotPasswordSubmit)).ServeHTTP)
 	r.Get(utils.PatientSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreatePatientSignupStepsMessage(), utils.PatientSignupForm)).ServeHTTP)
 	r.Get(utils.PatientSignupForm, templ.Handler(web.PatientSignupFormPage(utils.PatientSignupSubmit)).ServeHTTP)
@@ -56,7 +57,6 @@ func (s *Server) RegisterPatientRoutes(
 	r.Post(utils.PatientForgotPasswordSubmit, patientVerificationHandler.ForgotPassword)
 	r.Get(utils.GenerateCaptcha, patientHandler.GenerateCaptcha)
 	r.Post(utils.VerifyCaptcha, patientHandler.VerifyCaptcha)
-
 }
 
 func (s *Server) RegisterCommonRoutes(r chi.Router, notificationRepository repositories.Repository[models.Notification]) {
@@ -176,6 +176,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 					adminRouter, adminRepository, patientRepository,
 					doctorRepository, appointmentRepository, notificationRepository)
 				s.RegisterMasterAdminRoutes(adminRouter, adminRepository, masterAdminRepository)
+				s.RegisterPatientRoutes(adminRouter, patientRepository, appointmentRepository, notificationRepository)
 				adminRouter.ServeHTTP(w, r)
 				return
 			}

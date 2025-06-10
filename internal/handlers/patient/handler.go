@@ -18,6 +18,7 @@ type Patient interface {
 	VerifyCaptcha(http.ResponseWriter, *http.Request)
 	Dashboard(http.ResponseWriter, *http.Request)
 	Profile(http.ResponseWriter, *http.Request)
+	GetAppointments(w http.ResponseWriter, r *http.Request)
 }
 
 type patientHandler struct {
@@ -43,6 +44,7 @@ func NewPatientHandler(config PatientHandlerConfig) Patient {
 	return &patientHandler{
 		patientRepository:      config.PatientRepo,
 		notificationRepository: config.NotificationRepo,
+		appointmentRepository:  config.AppointmentRepo,
 		cache:                  config.Cache,
 		email:                  config.Email,
 		captchaStore:           base64Captcha.DefaultMemStore,
