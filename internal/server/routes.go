@@ -127,7 +127,7 @@ func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.
 	r.Get(utils.AdminAppointments, adminHandler.Appointments)
 	r.Get(fmt.Sprintf("%s/{id}/edit", utils.AdminAppointmentByID), adminHandler.GetAppointmentID())
 	r.Get(fmt.Sprintf("%s/{id}", utils.AdminAppointmentByID), adminHandler.GetAppointmentIDView())
-	r.Post(utils.AdminAppointments, adminHandler.PostAppointment)
+	r.Put(utils.AdminAppointments, adminHandler.PutAppointment)
 	r.Get("/", templ.Handler(web.AdminHomePage(utils.AdminLoginScreen, utils.MasterAdminLoginScreen)).ServeHTTP)
 }
 

@@ -37,8 +37,9 @@ func (a *adminHandler) Appointments(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(web.AdminAppointmentsPage(utils.AdminAppointments, appointmentsData)).ServeHTTP(w, r)
 }
 
-func (a *adminHandler) PostAppointment(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+// updates existing appointment
+func (a *adminHandler) PutAppointment(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
 		http.Error(w, fmt.Errorf("method:%s not allowed", r.Method).Error(), http.StatusBadRequest)
 		return
 	}
