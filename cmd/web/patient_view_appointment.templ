@@ -13,27 +13,61 @@ appointments []models.AppointmentData) {
 }
 
 templ PatientAppointments(appointments []models.AppointmentData) {
-    <div class="m-header sm:w-full sm:max-w-md mt-10">
-  </div>
-    <div id="appointsTable" class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:justify-between lg:px-8">
-<table class="min-w-full divide-y divide-gray-300" id="appointments">
-  <thead>
-    <tr>
-      <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">DoctorName</th>
-			<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">AppointDateTime</th>
-    </tr>
-  </thead>
-  <tbody class="divide-y divide-gray-200 bg-white"
-  hx-target="closest tr" hx-swap="outerHTML">
-  for _,appointment:=range appointments{
-    		<tr id={appointment.DoctorName}>
-      <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-      <div class="text-gray-500">{appointment.DoctorName}</div></td>
-      <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-      <div class="text-gray-500">{appointment.AppointmentDate}</div></td>
-      </tr>
-  }
-  </tbody>
-  </table>
-  </div>
+//     <div class="m-header sm:w-full sm:max-w-md mt-10">
+//   </div>
+//     <div id="appointsTable" class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:justify-between lg:px-8">
+// <table class="min-w-full divide-y divide-gray-300" id="appointments">
+//   <thead>
+//     <tr>
+//       <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">DoctorName</th>
+// 			<th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">AppointDateTime</th>
+//     </tr>
+//   </thead>
+//   <tbody class="divide-y divide-gray-200 bg-white"
+//   hx-target="closest tr" hx-swap="outerHTML">
+//   for _,appointment:=range appointments{
+//     		<tr id={appointment.DoctorName}>
+//       <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+//       <div class="text-gray-500">{appointment.DoctorName}</div></td>
+//       <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+//       <div class="text-gray-500">{appointment.AppointmentDate}</div></td>
+//       </tr>
+//   }
+//   </tbody>
+//   </table>
+//   </div>
+<body hx-ext="dynamic-url">
+  <div class="calendar-container">
+		  <link href="assets/css/calendar.css" rel="stylesheet"/>
+        <header class="calendar-header">
+          <meta charset="UTF-8">
+            <p class="calendar-current-date"></p>
+            <div class="calendar-navigation">
+                <span id="calendar-prev" 
+                class="material-symbols-rounded">
+                <p>&#x02190</p>
+                </span>
+                <span id="calendar-next" 
+                class="material-symbols-rounded">
+                <p>&#x02192</p>
+                </span>
+            </div>
+        </header>
+        <div class="calendar-body" hx-get="/view_patient_appointment/{year}/{month}/{day}" hx-trigger="click">
+            <ul class="calendar-weekdays">
+                <li>Sun</li>
+                <li>Mon</li>
+                <li>Tue</li>
+                <li>Wed</li>
+                <li>Thu</li>
+                <li>Fri</li>
+                <li>Sat</li>
+            </ul>
+            <ul class="calendar-dates"></ul>
+        </div>
+    </div>
+<script src="assets/js/calendar.js"></script>
+<div>
+      </div>
+</body>
 }
