@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -76,5 +77,9 @@ func (n *notificationRepository) FindAllByField(ctx context.Context, field strin
 }
 
 func (n *notificationRepository) FindAllWithPage(ctx context.Context) ([]models.Notification, error) {
+	return nil, nil
+}
+
+func (n *notificationRepository) FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]models.Notification, error) {
 	return nil, nil
 }

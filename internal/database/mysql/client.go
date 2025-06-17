@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
@@ -179,13 +180,28 @@ func (s *mysqlService) FindAllWithPage(ctx context.Context, page database.Pagina
 		page.Limit = 10
 	}
 	page.Offset = (page.Page - 1) * page.Limit
-	s.db.Offset(page.Offset).Limit(page.Limit).Find(entity)
+	if err := s.db.Offset(page.Offset).Limit(page.Limit).
+		Find(entity).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *mysqlService) FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error {
 	// FindAllByField retrieves all the records with field and provided value
 	if err := s.db.WithContext(ctx).Where(field+" = ?", value).Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *mysqlService) FilterByDate(
+	ctx context.Context, entity any, idField string, idValue uint, field string, start, end time.Time) error {
+	if err := s.db.
+		Where(idField+" = ?", idValue).
+		Where(field+" >= ?", start.Format(time.DateTime)).
+		Where(field+" <=?", end.Format(time.DateTime)).
+		Find(entity).Error; err != nil {
 		return err
 	}
 	return nil

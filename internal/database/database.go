@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"time"
 )
 
 // Database represents a service that interacts with a database.
@@ -25,10 +26,12 @@ type Database interface {
 	Close() error
 
 	// FindByField retrieves the first record with field and provided value
-	FindByField(ctx context.Context, entity interface{}, field string, value interface{}) error
+	FindByField(ctx context.Context,
+		entity interface{}, field string, value interface{}) error
 
 	// FindAllByField retrieves all the records with field and provided value
-	FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error
+	FindAllByField(ctx context.Context,
+		entity interface{}, field string, value interface{}) error
 
 	// AutoMigrate migrates database schema to match the struct definitions
 	AutoMigrate(ctx context.Context, entity interface{}) error
@@ -37,6 +40,8 @@ type Database interface {
 	FindAll(ctx context.Context, entity interface{}) error
 
 	FindAllWithPage(ctx context.Context, paginate Paginate, entity any) error
+
+	FilterByDate(ctx context.Context, entity any, idField string, idValue uint, field string, start, end time.Time) error
 }
 
 type Paginate struct {

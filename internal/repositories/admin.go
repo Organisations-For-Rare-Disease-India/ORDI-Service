@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -74,5 +75,9 @@ func (r *adminRepository) FindAllByField(ctx context.Context, field string, valu
 }
 
 func (r *adminRepository) FindAllWithPage(ctx context.Context) ([]models.Admin, error) {
+	return []models.Admin{}, nil
+}
+
+func (r *adminRepository) FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]models.Admin, error) {
 	return []models.Admin{}, nil
 }

@@ -12,6 +12,7 @@ func TestNoofDays(t *testing.T) {
 	if days < 28 || days > 31 {
 		t.Fatalf("invalid days:%d\t received", days)
 	}
+	t.Logf("no of days:%d\n", days)
 
 }
 

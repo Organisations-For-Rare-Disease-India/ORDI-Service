@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -73,11 +74,26 @@ func (a *appointmentRepository) FindAllWithPage(ctx context.Context) ([]models.A
 	return appointments, nil
 }
 
-func (a *appointmentRepository) FindAllByField(ctx context.Context, field string, value any) ([]models.Appointment, error) {
+func (a *appointmentRepository) FindAllByField(
+	ctx context.Context, field string, value any) ([]models.Appointment, error) {
 	var appointments []models.Appointment
 	if err := a.db.FindAllByField(ctx, &appointments, field, value); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil // No Admin Found
+		}
+		return nil, err
+	}
+	return appointments, nil
+}
+
+func (a *appointmentRepository) FilterByDate(
+	ctx context.Context, idField string, idValue uint, field string,
+	start, end time.Time) ([]models.Appointment, error) {
+	appointments := []models.Appointment{}
+	if err := a.db.FilterByDate(
+		ctx, appointments, idField, idValue, field, start, end); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
 		}
 		return nil, err
 	}

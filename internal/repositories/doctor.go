@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -76,5 +77,9 @@ func (r *doctorRepository) FindAllByField(ctx context.Context, field string, val
 }
 
 func (r *doctorRepository) FindAllWithPage(ctx context.Context) ([]models.Doctor, error) {
+	return []models.Doctor{}, nil
+}
+
+func (r *doctorRepository) FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]models.Doctor, error) {
 	return []models.Doctor{}, nil
 }

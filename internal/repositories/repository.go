@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"time"
 )
 
 type Repository[T any] interface {
@@ -18,4 +19,6 @@ type Repository[T any] interface {
 	FindAllWithPage(ctx context.Context) ([]T, error)
 
 	FindAllByField(ctx context.Context, field string, value interface{}) ([]T, error)
+
+	FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]T, error)
 }
