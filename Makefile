@@ -19,6 +19,8 @@ build:
 
 # Run the application
 run:
+	@npx @tailwindcss/cli -i ./cmd/web/assets/css/input.css -o ./cmd/web/assets/css/output.css
+	@templ generate
 	@go run cmd/api/main.go
 
 # Create DB container
