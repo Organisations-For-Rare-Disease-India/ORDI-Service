@@ -80,6 +80,14 @@ func (n *notificationRepository) FindAllWithPage(ctx context.Context) ([]models.
 	return nil, nil
 }
 
-func (n *notificationRepository) FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]models.Notification, error) {
+func (n *notificationRepository) FilterByDate(ctx context.Context, idField string,
+	idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.Notification, error) {
+	return []models.Notification{}, nil
+}
+
+func (n *notificationRepository) FilterBetweenDates(ctx context.Context,
+	idField string,
+	idValue uint, field string, start, end time.Time) ([]models.Notification, error) {
 	return nil, nil
 }

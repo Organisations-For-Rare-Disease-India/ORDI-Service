@@ -79,6 +79,14 @@ func (r *patientRepository) FindAllWithPage(ctx context.Context) ([]models.Patie
 	return []models.Patient{}, nil
 }
 
-func (r *patientRepository) FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]models.Patient, error) {
+func (r *patientRepository) FilterByDate(ctx context.Context, idField string,
+	idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.Patient, error) {
 	return []models.Patient{}, nil
+}
+
+func (r *patientRepository) FilterBetweenDates(ctx context.Context,
+	idField string,
+	idValue uint, field string, start, end time.Time) ([]models.Patient, error) {
+	return nil, nil
 }

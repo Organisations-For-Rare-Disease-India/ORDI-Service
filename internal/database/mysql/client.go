@@ -195,13 +195,27 @@ func (s *mysqlService) FindAllByField(ctx context.Context, entity interface{}, f
 	return nil
 }
 
-func (s *mysqlService) FilterByDate(
+// FilterByMonth uses patient_id and appointment_date to
+// filter data between start and end dates
+func (s *mysqlService) FilterBetweenDates(
 	ctx context.Context, entity any, idField string, idValue uint, field string, start, end time.Time) error {
 	if err := s.db.
 		Where(idField+" = ?", idValue).
 		Where(field+" >= ?", start.Format(time.DateTime)).
 		Where(field+" <=?", end.Format(time.DateTime)).
 		Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// FilterByDate uses patient_id and appointment_date to filter
+// appointment data
+func (s *mysqlService) FilterByDate(
+	ctx context.Context, entity any, idField string, idValue uint,
+	filterField string, filterFieldValue time.Time) error {
+	if err := s.db.Where(idField+" =?", idValue).
+		Where(filterField+" >= ?", filterFieldValue.Format(time.DateTime)).Error; err != nil {
 		return err
 	}
 	return nil

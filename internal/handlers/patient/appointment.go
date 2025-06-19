@@ -7,15 +7,11 @@ import (
 	"ORDI/internal/utils"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/a-h/templ"
 )
-
-func (s *patientHandler) Appointment(w http.ResponseWriter, r *http.Request) {
-	// display only calender
-	templ.Handler(web.CalendarPage()).ServeHTTP(w, r)
-}
 
 func (s *patientHandler) GetMonthlyAppointment(w http.ResponseWriter, r *http.Request) {
 	// claims, err := getLoggedinUser(r, w)
@@ -42,9 +38,9 @@ func (s *patientHandler) GetMonthlyAppointment(w http.ResponseWriter, r *http.Re
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	appointments, err := s.appointmentRepository.FilterByDate(
+	appointments, err := s.appointmentRepository.FilterBetweenDates(
 		r.Context(),
-		"patiend_id", patientFromStore.ID,
+		"patient_id", patientFromStore.ID,
 		"appointment_date", startDate, lastDate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -61,7 +57,7 @@ func (s *patientHandler) GetMonthlyAppointment(w http.ResponseWriter, r *http.Re
 
 	}
 	templ.Handler(web.GetPatientAppointments(
-		utils.GetPatientAppointments,
+		utils.PatientAppointments,
 		appointmentsData)).ServeHTTP(w, r)
 }
 
@@ -74,8 +70,10 @@ func getLoggedinUser(r *http.Request,
 	return *claims, nil
 }
 
+const LOCATION = `Asia/Calcutta`
+
 func location() (*time.Location, error) {
-	return time.LoadLocation(`Asia/Calcutta`)
+	return time.LoadLocation(LOCATION)
 }
 
 func startTime(t time.Time) (time.Time, error) {
@@ -130,7 +128,13 @@ func lastDay(t time.Time) (time.Time, error) {
 }
 
 // TODO: enable to get patient email from cookie set during login time
+// NOTES: when patient visit appointments page, it shows list of appointment
+// for current month along with calendar on right to select a date .
+// When a date is selected from calendar it displays only the appointments
+// for the selected date. It fetches the patient details from the token initialized
+// during logged in
 func (s *patientHandler) GetAppointments(w http.ResponseWriter, r *http.Request) {
+	// 1. get logged in user from the token
 	// claims, err := getLoggedinUser(r, w)
 	// if err != nil {
 	// 	http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -145,7 +149,27 @@ func (s *patientHandler) GetAppointments(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	appointmentsFromStore, err := s.appointmentRepository.FindAllByField(r.Context(), "patient_id", patientFromStore.ID)
+	// 2. get url path parameters from request url
+	ymd, err := getYearMonthDate(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if ymd.year == 0 || ymd.month == 0 || ymd.date == 0 {
+		// 3. get monthly appointments
+		s.GetMonthlyAppointment(w, r)
+		return
+	}
+	appointmentDate, err := dateTimeFormat(ymd)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// get appointments for selected date
+	appointmentsFromStore, err := s.appointmentRepository.
+		FilterByDate(r.Context(), "patient_id",
+			patientFromStore.ID, "appointment_date", appointmentDate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -159,16 +183,54 @@ func (s *patientHandler) GetAppointments(w http.ResponseWriter, r *http.Request)
 		}
 
 	}
-	for _, v := range appointmentsData {
-		fmt.Printf("appointmentsData:%#v\n", v)
-
-	}
 	templ.Handler(web.GetPatientAppointments(
-		utils.GetPatientAppointments,
+		utils.PatientAppointments,
 		appointmentsData)).ServeHTTP(w, r)
 }
 
 type PatientAppointmentsData struct {
 	DoctorName      string `json:"doctor_name"`
 	AppointmentDate string `json:"appointment_date"`
+}
+
+type yearMonthDate struct {
+	year, month, date int
+}
+
+func getYearMonthDate(r *http.Request) (yearMonthDate, error) {
+	ymd := yearMonthDate{}
+	var err error
+	y := r.PathValue("year")
+	ymd.year, err = strToInt(y)
+	if err != nil {
+		return ymd, err
+	}
+	m := r.PathValue("month")
+	ymd.month, err = strToInt(m)
+	if err != nil {
+		return ymd, err
+	}
+	d := r.PathValue("date")
+	ymd.date, err = strToInt(d)
+	if err != nil {
+		return ymd, err
+	}
+	return ymd, err
+}
+
+func strToInt(in string) (int, error) {
+	if in != "" {
+		return strconv.Atoi(in)
+	}
+	return 0, nil
+}
+
+func dateTimeFormat(ymd yearMonthDate) (time.Time, error) {
+	location, err := location()
+	if err != nil {
+		return time.Time{}, err
+	}
+	appointmentDate := time.Date(ymd.year,
+		time.Month(ymd.month), ymd.date, 0, 0, 0, 0, location)
+	return appointmentDate, nil
 }

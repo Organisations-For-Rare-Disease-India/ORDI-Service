@@ -13,12 +13,12 @@ import (
 type Patient interface {
 	Signup(http.ResponseWriter, *http.Request)
 	Login(http.ResponseWriter, *http.Request)
-	Appointment(http.ResponseWriter, *http.Request)
 	GenerateCaptcha(http.ResponseWriter, *http.Request)
 	VerifyCaptcha(http.ResponseWriter, *http.Request)
 	Dashboard(http.ResponseWriter, *http.Request)
 	Profile(http.ResponseWriter, *http.Request)
 	GetAppointments(w http.ResponseWriter, r *http.Request)
+	GetMonthlyAppointment(w http.ResponseWriter, r *http.Request)
 }
 
 type patientHandler struct {

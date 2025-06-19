@@ -41,7 +41,13 @@ type Database interface {
 
 	FindAllWithPage(ctx context.Context, paginate Paginate, entity any) error
 
-	FilterByDate(ctx context.Context, entity any, idField string, idValue uint, field string, start, end time.Time) error
+	// FilterBetweenDates uses patient_id and appointment_date to filter
+	// appointment data between two given dates(usually month)
+	FilterBetweenDates(ctx context.Context, entity any,
+		idField string, idValue uint,
+		field string, start, end time.Time) error
+	FilterByDate(ctx context.Context, entity any, idField string, idValue uint,
+		filterField string, filterFieldValue time.Time) error
 }
 
 type Paginate struct {

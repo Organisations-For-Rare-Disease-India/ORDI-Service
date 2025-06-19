@@ -86,16 +86,31 @@ func (a *appointmentRepository) FindAllByField(
 	return appointments, nil
 }
 
-func (a *appointmentRepository) FilterByDate(
+func (a *appointmentRepository) FilterBetweenDates(
 	ctx context.Context, idField string, idValue uint, field string,
 	start, end time.Time) ([]models.Appointment, error) {
 	appointments := []models.Appointment{}
-	if err := a.db.FilterByDate(
-		ctx, appointments, idField, idValue, field, start, end); err != nil {
+	if err := a.db.FilterBetweenDates(
+		ctx, &appointments, idField, idValue,
+		field, start, end); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
 	}
 	return appointments, nil
+}
+
+func (a *appointmentRepository) FilterByDate(ctx context.Context,
+	idField string, idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.Appointment, error) {
+	appointment := []models.Appointment{}
+	if err := a.db.FilterByDate(ctx, &appointment,
+		idField, idValue, filterField, filterFieldValue); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return appointment, nil
 }

@@ -20,5 +20,9 @@ type Repository[T any] interface {
 
 	FindAllByField(ctx context.Context, field string, value interface{}) ([]T, error)
 
-	FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]T, error)
+	FilterBetweenDates(ctx context.Context, idField string, idValue uint,
+		field string, start, end time.Time) ([]T, error)
+
+	FilterByDate(ctx context.Context, idField string, idValue uint,
+		filterField string, filterFieldValue time.Time) ([]T, error)
 }

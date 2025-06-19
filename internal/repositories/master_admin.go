@@ -78,6 +78,14 @@ func (r *masterAdminRepository) FindAllWithPage(ctx context.Context) ([]models.M
 	return []models.MasterAdmin{}, nil
 }
 
-func (r *masterAdminRepository) FilterByDate(ctx context.Context, idField string, idValue uint, field string, start, end time.Time) ([]models.MasterAdmin, error) {
+func (r *masterAdminRepository) FilterByDate(ctx context.Context, idField string,
+	idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.MasterAdmin, error) {
 	return []models.MasterAdmin{}, nil
+}
+
+func (r *masterAdminRepository) FilterBetweenDates(ctx context.Context,
+	idField string,
+	idValue uint, field string, start, end time.Time) ([]models.MasterAdmin, error) {
+	return nil, nil
 }
