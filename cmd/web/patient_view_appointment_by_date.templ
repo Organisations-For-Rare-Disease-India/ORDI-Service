@@ -1,0 +1,29 @@
+package web
+import "ORDI/internal/models"
+templ GetPatientAppointmentByDate(patientAppointmentsPage string,
+appointments []models.AppointmentData) {
+<div>
+                  <table class="min-w-full divide-y divide-gray-300 text-left" id="appointments">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">DoctorName</th>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">AppointDateTime
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                      for _,appointment := range appointments{
+                      <tr id={appointment.AppointmentID}>
+                        <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                          <div class="text-gray-500">{appointment.DoctorName}</div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                          <div class="text-gray-500">{appointment.AppointmentDate}</div>
+                        </td>
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
+            </div>
+  
+}

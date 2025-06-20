@@ -13,7 +13,16 @@ import (
 	"github.com/a-h/templ"
 )
 
+// GetMonthlyAppointment fetches all appointments for logged in patient
+// by the current month
 func (s *patientHandler) GetMonthlyAppointment(w http.ResponseWriter, r *http.Request) {
+	// precheck
+	if y := r.PathValue("year"); y != "" {
+		http.Error(w,
+			fmt.Errorf("invalid request year month date path param received").
+				Error(), http.StatusBadRequest)
+		return
+	}
 	// claims, err := getLoggedinUser(r, w)
 	// if err != nil {
 	// 	http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -133,7 +142,8 @@ func lastDay(t time.Time) (time.Time, error) {
 // When a date is selected from calendar it displays only the appointments
 // for the selected date. It fetches the patient details from the token initialized
 // during logged in
-func (s *patientHandler) GetAppointments(w http.ResponseWriter, r *http.Request) {
+func (s *patientHandler) GetAppointmentByDate(
+	w http.ResponseWriter, r *http.Request) {
 	// 1. get logged in user from the token
 	// claims, err := getLoggedinUser(r, w)
 	// if err != nil {
@@ -158,7 +168,9 @@ func (s *patientHandler) GetAppointments(w http.ResponseWriter, r *http.Request)
 
 	if ymd.year == 0 || ymd.month == 0 || ymd.date == 0 {
 		// 3. get monthly appointments
-		s.GetMonthlyAppointment(w, r)
+		http.Error(w, fmt.Errorf(
+			"invalid url param recieved for year month and date").
+			Error(), http.StatusBadRequest)
 		return
 	}
 	appointmentDate, err := dateTimeFormat(ymd)
@@ -183,8 +195,8 @@ func (s *patientHandler) GetAppointments(w http.ResponseWriter, r *http.Request)
 		}
 
 	}
-	templ.Handler(web.GetPatientAppointments(
-		utils.PatientAppointments,
+	templ.Handler(web.GetPatientAppointmentByDate(
+		utils.PatientAppointmentByID,
 		appointmentsData)).ServeHTTP(w, r)
 }
 
@@ -197,6 +209,12 @@ type yearMonthDate struct {
 	year, month, date int
 }
 
+var monthLookUP = map[string]int{
+	"January": 1, "Feburary": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+	"July": 7, "August": 8, "September": 9, "October": 10, "November": 11,
+	"December": 12,
+}
+
 func getYearMonthDate(r *http.Request) (yearMonthDate, error) {
 	ymd := yearMonthDate{}
 	var err error
@@ -206,9 +224,8 @@ func getYearMonthDate(r *http.Request) (yearMonthDate, error) {
 		return ymd, err
 	}
 	m := r.PathValue("month")
-	ymd.month, err = strToInt(m)
-	if err != nil {
-		return ymd, err
+	if m != "" {
+		ymd.month = monthLookUP[m]
 	}
 	d := r.PathValue("date")
 	ymd.date, err = strToInt(d)

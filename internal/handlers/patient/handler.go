@@ -17,8 +17,8 @@ type Patient interface {
 	VerifyCaptcha(http.ResponseWriter, *http.Request)
 	Dashboard(http.ResponseWriter, *http.Request)
 	Profile(http.ResponseWriter, *http.Request)
-	GetAppointments(w http.ResponseWriter, r *http.Request)
 	GetMonthlyAppointment(w http.ResponseWriter, r *http.Request)
+	GetAppointmentByDate(w http.ResponseWriter, r *http.Request)
 }
 
 type patientHandler struct {

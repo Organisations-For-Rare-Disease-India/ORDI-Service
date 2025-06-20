@@ -22,7 +22,7 @@ templ PatientAppointments(appointments []models.AppointmentData) {
             <div class="col-span-1 col-start-2">
                 Appointments
             </div>
-            <div class="col-span-2 col-start-2">
+            <div id="appointment-table" class="col-span-2 col-start-2">
                   <table class="min-w-full divide-y divide-gray-300 text-left" id="appointments">
                     <thead>
                       <tr>
@@ -31,7 +31,8 @@ templ PatientAppointments(appointments []models.AppointmentData) {
                         </th>
                       </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white" hx-target="closest tr" hx-swap="outerHTML">
+                    <tbody class="divide-y divide-gray-200 bg-white"
+                    hx-target="closest tr" hx-swap="outerHTML" >
                       for _,appointment := range appointments{
                       <tr id={appointment.AppointmentID}>
                         <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
@@ -61,7 +62,7 @@ templ PatientAppointments(appointments []models.AppointmentData) {
                       </span>
                     </div>
                   </header>
-                  <div class="calendar-body" hx-get="/view_patient_appointment/{year}/{month}/{day}" hx-trigger="click">
+                  <div class="calendar-body" hx-get="/patient_appointment/{year}/{month}/{day}" hx-trigger="click" hx-target="#appointment-table">
                     <ul class="calendar-weekdays">
                       <li>Sun</li>
                       <li>Mon</li>

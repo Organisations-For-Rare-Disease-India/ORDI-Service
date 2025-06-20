@@ -9,6 +9,7 @@ const (
 	PatientLoginSubmit          = "/patient_login_submit"
 	PatientDashboard            = "/patient_dashboard"
 	PatientAppointments         = "/patient_appointments"
+	PatientAppointmentByID      = "/patient_appointment"
 	PatientProfile              = "/patient_profile"
 	PatientVerifyNew            = "/verify_patient"
 	PatientVerifyExisting       = "/verify_existing_patient"
