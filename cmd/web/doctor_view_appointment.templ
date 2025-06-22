@@ -62,7 +62,7 @@ templ DoctorAppointments(appointments []models.AppointmentData) {
                       </span>
                     </div>
                   </header>
-                  <div class="calendar-body" hx-get="/patient_appointment/{year}/{month}/{day}" hx-trigger="click" hx-target="#appointment-table">
+                  <div class="calendar-body" hx-get="/doctor_appointment/{year}/{month}/{day}" hx-trigger="click" hx-target="#appointment-table">
                     <ul class="calendar-weekdays">
                       <li>Sun</li>
                       <li>Mon</li>
