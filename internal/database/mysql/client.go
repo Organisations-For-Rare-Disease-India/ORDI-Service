@@ -214,9 +214,11 @@ func (s *mysqlService) FilterBetweenDates(
 func (s *mysqlService) FilterByDate(
 	ctx context.Context, entity any, idField string, idValue uint,
 	filterField string, filterFieldValue time.Time) error {
+	nextDay := filterFieldValue.Add(24 * time.Hour)
 	if err := s.db.
 		Where(idField+" =?", idValue).
 		Where(filterField+" >= ?", filterFieldValue.Format(time.DateTime)).
+		Where(filterField+" < ?", nextDay.Format(time.DateTime)).
 		Find(entity).
 		Error; err != nil {
 		return err

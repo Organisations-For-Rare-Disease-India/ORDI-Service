@@ -64,7 +64,7 @@ func (s *doctorHandler) GetMonthlyAppointment(
 		appointmentsFromStore,
 		s.doctorRepository, s.patientRepository)
 
-	if estr := calc.ErrList(errs); estr != nil && estr.Len() > 0 {
+	if estr := calc.ErrList(errs); estr != nil {
 		http.Error(w, estr.String(), http.StatusInternalServerError)
 		return
 	}
@@ -131,7 +131,7 @@ func (s *doctorHandler) GetAppointmentByDate(
 	appointmentsData, errs := calc.AppointmentIterate(r.Context(),
 		appointmentsFromStore,
 		s.doctorRepository, s.patientRepository)
-	if estr := calc.ErrList(errs); estr != nil && estr.Len() > 0 {
+	if estr := calc.ErrList(errs); estr != nil {
 		http.Error(w, estr.String(), http.StatusInternalServerError)
 		return
 	}

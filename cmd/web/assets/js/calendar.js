@@ -118,7 +118,6 @@ function getClickedDate() {
 
       clickedDay = parseInt(li.getAttribute('data-day'));
 
-      console.log('Clicked day:', clickedDay);
     });
   });
   return clickedDay

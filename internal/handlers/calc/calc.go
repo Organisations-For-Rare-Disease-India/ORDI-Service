@@ -50,7 +50,7 @@ func LastDay(t time.Time) (time.Time, error) {
 		return time.Time{}, err
 	}
 	return time.Date(
-		t.Year(), t.Month(), totalDays, 0, 0, 0, 0, location), nil
+		t.Year(), t.Month(), totalDays, 23, 59, 0, 0, location), nil
 }
 
 var monthLookUP = map[string]int{
@@ -68,18 +68,22 @@ func GetYearMonthDate(r *http.Request) (yearMonthDate, error) {
 	ymd := yearMonthDate{}
 	var err error
 	y := r.PathValue("year")
-	ymd.year, err = strToInt(y)
-	if err != nil {
-		return ymd, err
+	if y != "" {
+		ymd.year, err = strToInt(y)
+		if err != nil {
+			return ymd, err
+		}
 	}
 	m := r.PathValue("month")
 	if m != "" {
 		ymd.month = monthLookUP[m]
 	}
 	d := r.PathValue("date")
-	ymd.date, err = strToInt(d)
-	if err != nil {
-		return ymd, err
+	if d != "" {
+		ymd.date, err = strToInt(d)
+		if err != nil {
+			return ymd, err
+		}
 	}
 	return ymd, err
 }
@@ -126,11 +130,12 @@ func AppointmentIterate(
 		return []models.AppointmentData{}, nil
 	}
 	ad := make([]models.AppointmentData, len(data))
-	errList := make([]error, len(data))
+	errList := []error{}
 	for i, v := range slices.All(data) {
 		pdata, err := pr.FindByID(ctx, v.PatientID)
 		if err != nil {
-			errList[i] = err
+			errList = append(errList, err)
+			continue
 		}
 		ad[i] = models.AppointmentData{
 			AppointmentID:   fmt.Sprintf("%d", v.ID),
