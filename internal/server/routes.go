@@ -59,7 +59,9 @@ func (s *Server) RegisterPatientRoutes(
 	r.Post(utils.VerifyCaptcha, patientHandler.VerifyCaptcha)
 }
 
-func (s *Server) RegisterCommonRoutes(r chi.Router, notificationRepository repositories.Repository[models.Notification]) {
+func (s *Server) RegisterCommonRoutes(
+	r chi.Router,
+	notificationRepository repositories.Repository[models.Notification]) {
 	config := notification.NotificationHandlerConfig{
 		NotificationRepository: notificationRepository,
 	}
@@ -67,10 +69,16 @@ func (s *Server) RegisterCommonRoutes(r chi.Router, notificationRepository repos
 	r.Get(utils.Notifications, notificationHandler.ShowNotifications)
 }
 
-func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositories.Repository[models.Doctor], notificationRepository repositories.Repository[models.Notification]) {
+func (s *Server) RegisterDoctorRoutes(r chi.Router,
+	doctorRepository repositories.Repository[models.Doctor],
+	patientRepository repositories.Repository[models.Patient],
+	appointmentRepository repositories.Repository[models.Appointment],
+	notificationRepository repositories.Repository[models.Notification]) {
 	doctorHandler := doctor.NewDoctorHandler(doctor.DoctorHandlerConfig{
 		DoctorRepo:       doctorRepository,
 		NotificationRepo: notificationRepository,
+		AppointmentRepo:  appointmentRepository,
+		PatientRepo:      patientRepository,
 		Cache:            s.cache,
 		Email:            s.email,
 	})
@@ -79,7 +87,8 @@ func (s *Server) RegisterDoctorRoutes(r chi.Router, doctorRepository repositorie
 	r.Post(utils.DoctorSignupSubmit, doctorHandler.Signup)
 	r.Post(utils.DoctorLoginSubmit, doctorHandler.Login)
 	r.Get(utils.DoctorDashboard, doctorHandler.Dashboard)
-	r.Get(utils.DoctorAppointments, doctorHandler.Appointment)
+	r.Get(utils.DoctorAppointments, doctorHandler.GetMonthlyAppointment)
+	r.Get(fmt.Sprintf("%s/{year}/{month}/{date}", utils.DoctorAppointmentByID), doctorHandler.GetAppointmentByDate)
 	r.Get(utils.DoctorForgotPasswordScreen, templ.Handler(web.ForgotPasswordPage(utils.DoctorForgotPasswordSubmit)).ServeHTTP)
 	r.Get(utils.DoctorSignupSteps, templ.Handler(web.SignupStepsPage(utils.CreateDoctorSignupStepsMessage(), utils.DoctorSignupForm)).ServeHTTP)
 	r.Get(utils.DoctorSignupForm, templ.Handler(web.DoctorSignupFormPage(utils.DoctorSignupSubmit)).ServeHTTP)
@@ -131,7 +140,8 @@ func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.
 	r.Get("/", templ.Handler(web.AdminHomePage(utils.AdminLoginScreen, utils.MasterAdminLoginScreen)).ServeHTTP)
 }
 
-func (s *Server) RegisterMasterAdminRoutes(r chi.Router, adminRepository repositories.Repository[models.Admin],
+func (s *Server) RegisterMasterAdminRoutes(
+	r chi.Router, adminRepository repositories.Repository[models.Admin],
 	masterAdminRepository repositories.Repository[models.MasterAdmin],
 ) {
 	masterAdminHandler := masteradmin.NewMasterAdminHandler(masteradmin.MasterAdminHandlerConfig{
@@ -174,28 +184,36 @@ func (s *Server) RegisterRoutes() http.Handler {
 				adminRouter := chi.NewRouter()
 				s.RegisterAdminRoutes(
 					adminRouter, adminRepository, patientRepository,
-					doctorRepository, appointmentRepository, notificationRepository)
-				s.RegisterMasterAdminRoutes(adminRouter, adminRepository, masterAdminRepository)
-				s.RegisterPatientRoutes(adminRouter, patientRepository, appointmentRepository, notificationRepository)
+					doctorRepository, appointmentRepository,
+					notificationRepository)
+				s.RegisterMasterAdminRoutes(
+					adminRouter, adminRepository, masterAdminRepository)
+				// TODO: remove patient and doctor routes addded for testing
+				// purposes
+				s.RegisterPatientRoutes(adminRouter,
+					patientRepository, appointmentRepository,
+					notificationRepository)
+				s.RegisterDoctorRoutes(adminRouter, doctorRepository,
+					patientRepository, appointmentRepository,
+					notificationRepository)
 				adminRouter.ServeHTTP(w, r)
 				return
 			}
-
 			// Create public router
 			publicRouter := chi.NewRouter()
 			publicRouter.Get("/", templ.Handler(web.HomePage()).ServeHTTP)
 			publicRouter.Get(utils.HomeLogin, templ.Handler(web.ChooseRolePage(utils.DoctorLoginScreen, utils.PatientLoginScreen)).ServeHTTP)
 			publicRouter.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
-
 			// Patient specific handlers
-			s.RegisterPatientRoutes(publicRouter, patientRepository, appointmentRepository, notificationRepository)
-
+			s.RegisterPatientRoutes(publicRouter,
+				patientRepository, appointmentRepository,
+				notificationRepository)
 			// Doctor specific handlers
-			s.RegisterDoctorRoutes(publicRouter, doctorRepository, notificationRepository)
-
+			s.RegisterDoctorRoutes(publicRouter, doctorRepository,
+				patientRepository, appointmentRepository,
+				notificationRepository)
 			// Public Routes handlers
 			s.RegisterCommonRoutes(publicRouter, notificationRepository)
-
 			publicRouter.ServeHTTP(w, r)
 		})
 	})

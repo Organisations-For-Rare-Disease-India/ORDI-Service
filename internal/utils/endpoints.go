@@ -23,6 +23,7 @@ const (
 	DoctorLoginSubmit           = "/doctor_login_submit"
 	DoctorDashboard             = "/doctor_dashboard"
 	DoctorAppointments          = "/doctor_appointments"
+	DoctorAppointmentByID       = "/doctor_appointment"
 	DoctorProfile               = "/doctor_profile"
 	DoctorForgotPasswordScreen  = "/doctor_forgot_password"
 	DoctorForgotPasswordSubmit  = "/doctor_forgot_password_submit"

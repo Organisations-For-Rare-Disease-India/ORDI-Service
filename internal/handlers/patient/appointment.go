@@ -37,6 +37,11 @@ func (s *patientHandler) GetMonthlyAppointment(w http.ResponseWriter, r *http.Re
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+	if patientFromStore == nil {
+		http.Error(w,
+			fmt.Errorf("patient with email:%q not found", email).Error(), http.StatusBadRequest)
+		return
+	}
 	startDate, err := firstDay(time.Now())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -157,6 +162,11 @@ func (s *patientHandler) GetAppointmentByDate(
 		"email_id", email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	if patientFromStore == nil {
+		http.Error(w,
+			fmt.Errorf("patient with email:%q not found", email).Error(), http.StatusBadRequest)
 		return
 	}
 	// 2. get url path parameters from request url

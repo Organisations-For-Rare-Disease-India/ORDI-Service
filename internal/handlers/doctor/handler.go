@@ -18,15 +18,17 @@ var decoder = schema.NewDecoder()
 type Doctor interface {
 	Signup(http.ResponseWriter, *http.Request)
 	Login(http.ResponseWriter, *http.Request)
-	Appointment(http.ResponseWriter, *http.Request)
 	Dashboard(http.ResponseWriter, *http.Request)
 	Profile(http.ResponseWriter, *http.Request)
+	GetAppointmentByDate(w http.ResponseWriter, r *http.Request)
+	GetMonthlyAppointment(w http.ResponseWriter, r *http.Request)
 }
 
 type doctorHandler struct {
 	doctorRepository       repositories.Repository[models.Doctor]
 	appointmentRepository  repositories.Repository[models.Appointment]
 	notificationRepository repositories.Repository[models.Notification]
+	patientRepository      repositories.Repository[models.Patient]
 	cache                  cache.Cache
 	email                  email.Email
 }
@@ -35,6 +37,7 @@ type DoctorHandlerConfig struct {
 	DoctorRepo       repositories.Repository[models.Doctor]
 	AppointmentRepo  repositories.Repository[models.Appointment]
 	NotificationRepo repositories.Repository[models.Notification]
+	PatientRepo      repositories.Repository[models.Patient]
 	Cache            cache.Cache
 	Email            email.Email
 }
@@ -44,6 +47,7 @@ func NewDoctorHandler(config DoctorHandlerConfig) Doctor {
 		doctorRepository:       config.DoctorRepo,
 		appointmentRepository:  config.AppointmentRepo,
 		notificationRepository: config.NotificationRepo,
+		patientRepository:      config.PatientRepo,
 		cache:                  config.Cache,
 		email:                  config.Email,
 	}
