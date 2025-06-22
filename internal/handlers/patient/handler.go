@@ -25,6 +25,7 @@ type patientHandler struct {
 	patientRepository      repositories.Repository[models.Patient]
 	appointmentRepository  repositories.Repository[models.Appointment]
 	notificationRepository repositories.Repository[models.Notification]
+	doctorRepository       repositories.Repository[models.Doctor]
 	cache                  cache.Cache
 	email                  email.Email
 	captchaStore           base64Captcha.Store
@@ -34,6 +35,7 @@ type PatientHandlerConfig struct {
 	PatientRepo      repositories.Repository[models.Patient]
 	NotificationRepo repositories.Repository[models.Notification]
 	AppointmentRepo  repositories.Repository[models.Appointment]
+	DoctorRepo       repositories.Repository[models.Doctor]
 	Cache            cache.Cache
 	Email            email.Email
 	CaptchaStore     base64Captcha.Store
@@ -45,6 +47,7 @@ func NewPatientHandler(config PatientHandlerConfig) Patient {
 		patientRepository:      config.PatientRepo,
 		notificationRepository: config.NotificationRepo,
 		appointmentRepository:  config.AppointmentRepo,
+		doctorRepository:       config.DoctorRepo,
 		cache:                  config.Cache,
 		email:                  config.Email,
 		captchaStore:           base64Captcha.DefaultMemStore,

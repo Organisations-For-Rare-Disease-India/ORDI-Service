@@ -25,10 +25,12 @@ import (
 func (s *Server) RegisterPatientRoutes(
 	r chi.Router,
 	patientRepository repositories.Repository[models.Patient],
+	doctorRepository repositories.Repository[models.Doctor],
 	appointmentRepo repositories.Repository[models.Appointment],
 	notificationRepo repositories.Repository[models.Notification]) {
 	patientHandler := patient.NewPatientHandler(patient.PatientHandlerConfig{
 		PatientRepo:      patientRepository,
+		DoctorRepo:       doctorRepository,
 		NotificationRepo: notificationRepo,
 		AppointmentRepo:  appointmentRepo,
 		Cache:            s.cache,
@@ -191,7 +193,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 				// TODO: remove patient and doctor routes addded for testing
 				// purposes
 				s.RegisterPatientRoutes(adminRouter,
-					patientRepository, appointmentRepository,
+					patientRepository, doctorRepository, appointmentRepository,
 					notificationRepository)
 				s.RegisterDoctorRoutes(adminRouter, doctorRepository,
 					patientRepository, appointmentRepository,
@@ -206,7 +208,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			publicRouter.Get(utils.HomeSignup, templ.Handler(web.ChooseRolePage(utils.DoctorSignupSteps, utils.PatientSignupSteps)).ServeHTTP)
 			// Patient specific handlers
 			s.RegisterPatientRoutes(publicRouter,
-				patientRepository, appointmentRepository,
+				patientRepository, doctorRepository, appointmentRepository,
 				notificationRepository)
 			// Doctor specific handlers
 			s.RegisterDoctorRoutes(publicRouter, doctorRepository,
