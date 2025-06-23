@@ -9,6 +9,7 @@ const (
 	PatientLoginSubmit          = "/patient_login_submit"
 	PatientDashboard            = "/patient_dashboard"
 	PatientAppointments         = "/patient_appointments"
+	PatientAppointmentByID      = "/patient_appointment"
 	PatientProfile              = "/patient_profile"
 	PatientVerifyNew            = "/verify_patient"
 	PatientVerifyExisting       = "/verify_existing_patient"
@@ -22,6 +23,7 @@ const (
 	DoctorLoginSubmit           = "/doctor_login_submit"
 	DoctorDashboard             = "/doctor_dashboard"
 	DoctorAppointments          = "/doctor_appointments"
+	DoctorAppointmentByID       = "/doctor_appointment"
 	DoctorProfile               = "/doctor_profile"
 	DoctorForgotPasswordScreen  = "/doctor_forgot_password"
 	DoctorForgotPasswordSubmit  = "/doctor_forgot_password_submit"
@@ -40,11 +42,13 @@ const (
 	AdminRegisterSubmit         = "/admin_register_submit"
 	AdminViewDoctorList         = "/admin_view_doctor_list"
 	AdminViewPatientList        = "/admin_view_patient_list"
+	AdminAppointments           = "/admin_view_appointments"
+	AdminAppointmentByID        = "/admin_view_appointment"
 	MasterAdminLoginScreen      = "/master_admin_login"
 	MasterAdminLoginSubmit      = "/master_admin_login_submit"
 	GenerateCaptcha             = "/generate_captcha"
 	VerifyCaptcha               = "/verify_captcha"
-	Notifications = "/notifications"
+	Notifications               = "/notifications"
 )
 
 // Domain name

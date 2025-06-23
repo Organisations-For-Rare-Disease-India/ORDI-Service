@@ -2,16 +2,15 @@ package models
 
 import "errors"
 
-type Role int 
+type Role int
 
 const (
-	DoctorType  = iota  
-	PatientType	 
+	DoctorType = iota
+	PatientType
 	AdminType
 )
 
-
-func (r Role)  String() string {
+func (r Role) String() string {
 	switch r {
 	case DoctorType:
 		return "doctor"
@@ -21,18 +20,18 @@ func (r Role)  String() string {
 		return "admin"
 	default:
 		return "unknown"
-	}	
+	}
 }
 
-func ParseRole(s string) (Role , error) {
+func ParseRole(s string) (Role, error) {
 	switch s {
 	case "Doctor":
-		return DoctorType,nil
+		return DoctorType, nil
 	case "Patient":
-		return PatientType,nil
+		return PatientType, nil
 	case "Admin":
-		return AdminType,nil
+		return AdminType, nil
 	default:
-		return 0,errors.New("invalid role")
-	}	
+		return 0, errors.New("invalid role")
+	}
 }

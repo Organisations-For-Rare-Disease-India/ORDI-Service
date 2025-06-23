@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -72,4 +73,20 @@ func (r *patientRepository) FindAllByField(ctx context.Context, field string, va
 		return nil, err
 	}
 	return patients, nil
+}
+
+func (r *patientRepository) FindAllWithPage(ctx context.Context) ([]models.Patient, error) {
+	return []models.Patient{}, nil
+}
+
+func (r *patientRepository) FilterByDate(ctx context.Context, idField string,
+	idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.Patient, error) {
+	return []models.Patient{}, nil
+}
+
+func (r *patientRepository) FilterBetweenDates(ctx context.Context,
+	idField string,
+	idValue uint, field string, start, end time.Time) ([]models.Patient, error) {
+	return nil, nil
 }

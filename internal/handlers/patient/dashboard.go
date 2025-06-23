@@ -23,5 +23,6 @@ func (p *patientHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: Add logic here to show current status of patient
-	templ.Handler(web.PatientDashboardPage(patient.FirstName, utils.PatientProfile)).ServeHTTP(w, r)
+	templ.Handler(web.PatientDashboardPage(patient.FirstName,
+		utils.PatientProfile)).ServeHTTP(w, r)
 }

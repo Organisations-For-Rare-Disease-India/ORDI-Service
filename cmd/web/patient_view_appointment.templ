@@ -1,0 +1,84 @@
+package web
+import "ORDI/internal/models"
+
+  
+
+templ GetPatientAppointments(patientAppointmentsPage string,
+appointments []models.AppointmentData) {
+@Base(){
+<div id="patient-appointment-view">
+    @PatientAppointments(appointments)
+</div>
+}
+}
+
+templ PatientAppointments(appointments []models.AppointmentData) {
+<div>
+  <div class="m-header sm:w-full sm:max-w-md mt-10 ">&nbsp</div>
+  <div class="m-header sm:w-full sm:max-w-md mt-10 ">&nbsp</div>
+  <div class="m-header sm:w-full sm:max-w-md mt-10 ">&nbsp</div>
+  <div class="m-header sm:w-full sm:max-w-md mt-10 ">&nbsp</div>
+          <div class="grid grid-col-6 gap-4">
+            <div class="col-span-1 col-start-2">
+                Appointments
+            </div>
+            <div id="appointment-table" class="col-span-2 col-start-2">
+                  <table class="min-w-full divide-y divide-gray-300 text-left" id="appointments">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">DoctorName</th>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">AppointDateTime
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white"
+                    hx-target="closest tr" hx-swap="outerHTML" >
+                      for _,appointment := range appointments{
+                      <tr id={appointment.AppointmentID}>
+                        <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                          <div class="text-gray-500">{appointment.DoctorName}</div>
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                          <div class="text-gray-500">{appointment.AppointmentDate}</div>
+                        </td>
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
+            </div>
+            <div class="col-span-1 col-end-7 ">
+                <div class="mr-4 mx-auto my-auto max-w-xl flex items-centre">
+                <div class="calendar-container content-center">
+                  <link href="assets/css/calendar.css" rel="stylesheet" />
+                  <header class="calendar-header">
+                    <meta charset="UTF-8">
+                    <p class="calendar-current-date"></p>
+                    <div class="calendar-navigation">
+                      <span id="calendar-prev" class="material-symbols-rounded">
+                        <p>&#x02190</p>
+                      </span>
+                      <span id="calendar-next" class="material-symbols-rounded">
+                        <p>&#x02192</p>
+                      </span>
+                    </div>
+                  </header>
+                  <div class="calendar-body" hx-get="/patient_appointment/{year}/{month}/{day}" hx-trigger="click" hx-target="#appointment-table">
+                    <ul class="calendar-weekdays">
+                      <li>Sun</li>
+                      <li>Mon</li>
+                      <li>Tue</li>
+                      <li>Wed</li>
+                      <li>Thu</li>
+                      <li>Fri</li>
+                      <li>Sat</li>
+                    </ul>
+                    <ul class="calendar-dates"></ul>
+                  </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+          </div>
+  
+<script src="assets/js/calendar.js"></script>
+}

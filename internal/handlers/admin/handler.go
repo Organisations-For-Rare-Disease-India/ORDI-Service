@@ -27,32 +27,39 @@ type Admin interface {
 	Setup(http.ResponseWriter, *http.Request)
 	ListDoctors(http.ResponseWriter, *http.Request)
 	ListPatients(http.ResponseWriter, *http.Request)
+	Appointments(http.ResponseWriter, *http.Request)
+	GetAppointmentID() http.HandlerFunc
+	PutAppointment(http.ResponseWriter, *http.Request)
+	GetAppointmentIDView() http.HandlerFunc
 }
 
 type adminHandler struct {
-	adminRepository   repositories.Repository[models.Admin]
-	patientRepository repositories.Repository[models.Patient]
-	doctorRepository  repositories.Repository[models.Doctor]
+	adminRepository        repositories.Repository[models.Admin]
+	patientRepository      repositories.Repository[models.Patient]
+	doctorRepository       repositories.Repository[models.Doctor]
+	appointmentRepository  repositories.Repository[models.Appointment]
 	notificationRepository repositories.Repository[models.Notification]
-	email             email.Email
+	email                  email.Email
 }
 
 type AdminHandlerConfig struct {
-	AdminRepo   repositories.Repository[models.Admin]
-	PatientRepo repositories.Repository[models.Patient]
-	DoctorRepo  repositories.Repository[models.Doctor]
+	AdminRepo        repositories.Repository[models.Admin]
+	PatientRepo      repositories.Repository[models.Patient]
+	DoctorRepo       repositories.Repository[models.Doctor]
+	AppointmentRepo  repositories.Repository[models.Appointment]
 	NotificationRepo repositories.Repository[models.Notification]
-	Cache       cache.Cache
-	Email       email.Email
+	Cache            cache.Cache
+	Email            email.Email
 }
 
 func NewAdminHandler(config AdminHandlerConfig) Admin {
 	return &adminHandler{
-		adminRepository:   config.AdminRepo,
-		patientRepository: config.PatientRepo,
-		doctorRepository:  config.DoctorRepo,
+		adminRepository:        config.AdminRepo,
+		patientRepository:      config.PatientRepo,
+		doctorRepository:       config.DoctorRepo,
 		notificationRepository: config.NotificationRepo,
-		email:             config.Email,
+		appointmentRepository:  config.AppointmentRepo,
+		email:                  config.Email,
 	}
 }
 

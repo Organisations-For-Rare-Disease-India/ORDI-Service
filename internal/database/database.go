@@ -1,6 +1,9 @@
 package database
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // Database represents a service that interacts with a database.
 type Database interface {
@@ -23,14 +26,34 @@ type Database interface {
 	Close() error
 
 	// FindByField retrieves the first record with field and provided value
-	FindByField(ctx context.Context, entity interface{}, field string, value interface{}) error
+	FindByField(ctx context.Context,
+		entity interface{}, field string, value interface{}) error
 
 	// FindAllByField retrieves all the records with field and provided value
-	FindAllByField(ctx context.Context , entity interface{} , field string , value interface{}) error
+	FindAllByField(ctx context.Context,
+		entity interface{}, field string, value interface{}) error
 
 	// AutoMigrate migrates database schema to match the struct definitions
 	AutoMigrate(ctx context.Context, entity interface{}) error
 
 	// FindAll finds all instances of type entity
 	FindAll(ctx context.Context, entity interface{}) error
+
+	FindAllWithPage(ctx context.Context, paginate Paginate, entity any) error
+
+	// FilterBetweenDates uses patient_id and appointment_date to filter
+	// appointment data between two given dates(usually month)
+	FilterBetweenDates(ctx context.Context, entity any,
+		idField string, idValue uint,
+		field string, start, end time.Time) error
+	FilterByDate(ctx context.Context, entity any, idField string, idValue uint,
+		filterField string, filterFieldValue time.Time) error
+}
+
+type Paginate struct {
+	Offset     int   `json:"offset,omitempty"`
+	Page       int   `json:"page,omitempty"`
+	Limit      int   `json:"limit,omitempty"`
+	Total      int64 `json:"total,omitempty"`
+	TotalPages int64 `json:"total_pages,omitempty"`
 }
