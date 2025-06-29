@@ -31,6 +31,7 @@ type Admin interface {
 	GetAppointmentID() http.HandlerFunc
 	PutAppointment(http.ResponseWriter, *http.Request)
 	GetAppointmentIDView() http.HandlerFunc
+	CreateAppointment(http.ResponseWriter, *http.Request)
 }
 
 type adminHandler struct {

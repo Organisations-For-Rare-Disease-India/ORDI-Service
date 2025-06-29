@@ -136,6 +136,7 @@ func (s *Server) RegisterAdminRoutes(r chi.Router, adminRepository repositories.
 	r.Get(utils.AdminViewDoctorList, adminHandler.ListDoctors)
 	r.Get(utils.AdminViewPatientList, adminHandler.ListPatients)
 	r.Get(utils.AdminAppointments, adminHandler.Appointments)
+	r.Get(utils.AdminAppointmentCreate, adminHandler.CreateAppointment)
 	r.Get(fmt.Sprintf("%s/{id}/edit", utils.AdminAppointmentByID), adminHandler.GetAppointmentID())
 	r.Get(fmt.Sprintf("%s/{id}", utils.AdminAppointmentByID), adminHandler.GetAppointmentIDView())
 	r.Put(utils.AdminAppointments, adminHandler.PutAppointment)
