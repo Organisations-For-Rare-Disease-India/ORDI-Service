@@ -51,13 +51,27 @@ templ AdminCreateAppointmentScreen(appointmentEndpoint string) {
               <p class="text-red-500 text-xs italic">Please fill out this field.</p>
               <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-doctor-last-name" type="text" placeholder="Doe">
             </div>
+            
+      <div class="w-full md:w-1/2 px-3">
+          <label for="time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select time:</label>
+              <p class="text-red-500 text-xs italic">Please select field.</p>
+          <div class="relative">
+              <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                      <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                  </svg>
+              </div>
+              <input type="time" id="time" class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="09:00" max="18:00" value="00:00" required />
+          </div>
+    </div>
+
           </div>
       </form>
     </div>
-                  <div class="mx-auto my-auto max-w-xl flex items-centre col-span-1 col-start-2">
-                  <div class="calendar-container content-center">
-                    <link href="assets/css/calendar.css" rel="stylesheet" />
-                    <header class="calendar-header">
+    <div class="mx-auto my-auto max-w-xl flex items-centre col-span-1 col-start-2">
+            <div class="calendar-container content-center">
+                  <link href="assets/css/calendar.css" rel="stylesheet" />
+                  <header class="calendar-header">
                       <meta charset="UTF-8">
                       <p class="calendar-current-date"></p>
                       <div class="calendar-navigation">
@@ -83,6 +97,8 @@ templ AdminCreateAppointmentScreen(appointmentEndpoint string) {
                   </div>
                   </div>
     </div>
+    
+
   </div>
 <script src="assets/js/calendar.js"></script>
 }
