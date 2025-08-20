@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -66,9 +67,25 @@ func (r *masterAdminRepository) FindAllByField(ctx context.Context, field string
 	var admin []models.MasterAdmin
 	if err := r.db.FindByField(ctx, &admin, field, value); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil // No Admin Found 
+			return nil, nil // No Admin Found
 		}
 		return nil, err
 	}
 	return admin, nil
+}
+
+func (r *masterAdminRepository) FindAllWithPage(ctx context.Context) ([]models.MasterAdmin, error) {
+	return []models.MasterAdmin{}, nil
+}
+
+func (r *masterAdminRepository) FilterByDate(ctx context.Context, idField string,
+	idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.MasterAdmin, error) {
+	return []models.MasterAdmin{}, nil
+}
+
+func (r *masterAdminRepository) FilterBetweenDates(ctx context.Context,
+	idField string,
+	idValue uint, field string, start, end time.Time) ([]models.MasterAdmin, error) {
+	return nil, nil
 }

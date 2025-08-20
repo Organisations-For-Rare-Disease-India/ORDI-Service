@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
@@ -124,7 +125,8 @@ func (s *mysqlService) Close() error {
 	return sqlDB.Close()
 }
 
-func (s *mysqlService) FindByID(ctx context.Context, id uint, entity interface{}) error {
+func (s *mysqlService) FindByID(
+	ctx context.Context, id uint, entity any) error {
 	if err := s.db.WithContext(ctx).First(entity, id).Error; err != nil {
 		return err
 	}
@@ -167,9 +169,58 @@ func (s *mysqlService) FindAll(ctx context.Context, entity interface{}) error {
 	return nil
 }
 
+func (s *mysqlService) FindAllWithPage(ctx context.Context, page database.Paginate, entity any) error {
+	var totalRows int64
+	s.db.Model(entity).Count(&totalRows)
+	page.Total = totalRows
+	if page.Page == 0 {
+		page.Page = 1
+	}
+	if page.Limit == 0 {
+		page.Limit = 10
+	}
+	page.Offset = (page.Page - 1) * page.Limit
+	if err := s.db.Offset(page.Offset).Limit(page.Limit).
+		Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *mysqlService) FindAllByField(ctx context.Context, entity interface{}, field string, value interface{}) error {
 	// FindAllByField retrieves all the records with field and provided value
 	if err := s.db.WithContext(ctx).Where(field+" = ?", value).Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// FilterByMonth uses patient_id and appointment_date to
+// filter data between start and end dates
+func (s *mysqlService) FilterBetweenDates(
+	ctx context.Context, entity any, idField string, idValue uint, field string, start, end time.Time) error {
+	if err := s.db.
+		Where(idField+" = ?", idValue).
+		Where(field+" >= ?", start.Format(time.DateTime)).
+		Where(field+" <=?", end.Format(time.DateTime)).
+		Find(entity).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// FilterByDate uses patient_id and appointment_date to filter
+// appointment data
+func (s *mysqlService) FilterByDate(
+	ctx context.Context, entity any, idField string, idValue uint,
+	filterField string, filterFieldValue time.Time) error {
+	nextDay := filterFieldValue.Add(24 * time.Hour)
+	if err := s.db.
+		Where(idField+" =?", idValue).
+		Where(filterField+" >= ?", filterFieldValue.Format(time.DateTime)).
+		Where(filterField+" < ?", nextDay.Format(time.DateTime)).
+		Find(entity).
+		Error; err != nil {
 		return err
 	}
 	return nil

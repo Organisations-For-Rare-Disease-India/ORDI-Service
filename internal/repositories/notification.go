@@ -5,6 +5,7 @@ import (
 	"ORDI/internal/models"
 	"context"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -42,7 +43,6 @@ func (n *notificationRepository) Delete(ctx context.Context, notification *model
 	return n.db.Delete(ctx, notification)
 }
 
-
 func (n *notificationRepository) FindByField(ctx context.Context, field string, value interface{}) (*models.Notification, error) {
 	var notification models.Notification
 	if err := n.db.FindByField(ctx, &notification, field, value); err != nil {
@@ -69,9 +69,25 @@ func (n *notificationRepository) FindAllByField(ctx context.Context, field strin
 	var notifications []models.Notification
 	if err := n.db.FindAllByField(ctx, &notifications, field, value); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil // No Admin Found 
+			return nil, nil // No Admin Found
 		}
 		return nil, err
 	}
 	return notifications, nil
+}
+
+func (n *notificationRepository) FindAllWithPage(ctx context.Context) ([]models.Notification, error) {
+	return nil, nil
+}
+
+func (n *notificationRepository) FilterByDate(ctx context.Context, idField string,
+	idValue uint, filterField string,
+	filterFieldValue time.Time) ([]models.Notification, error) {
+	return []models.Notification{}, nil
+}
+
+func (n *notificationRepository) FilterBetweenDates(ctx context.Context,
+	idField string,
+	idValue uint, field string, start, end time.Time) ([]models.Notification, error) {
+	return nil, nil
 }
